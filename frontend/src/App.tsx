@@ -1,34 +1,39 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import english10k from './assets/english_10k.json'
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Words noOfWords = {50}/>
     </>
+  )
+}
+
+interface WordsType {
+  noOfWords : number
+}
+
+function Words(props : WordsType){
+  let Words: string[] = [];
+  let randomIndex = 0;
+
+  for(let i = 0; i < props.noOfWords; i++){
+    randomIndex = Math.floor( Math.random() * 10000 );
+    Words.push(english10k.words[randomIndex]);
+  }
+
+  return(
+    <div className='flex items-center h-screen'>
+    <div className='flex w-3/4 flex-wrap text-4xl mx-auto '>
+      {
+        Words.map(
+          (word, index) => {
+            return <div key={index} className='mr-6 mb-7 h-7 flex items-center'>{word}</div>
+          }
+        )
+      }
+    </div>  
+    </div>
   )
 }
 
