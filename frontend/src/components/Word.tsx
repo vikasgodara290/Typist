@@ -1,26 +1,25 @@
-import React from 'react';
 import Letter from './Letter';
 
 interface WordType {
     word: string;
     wordIndex: number;
-    currentWordIndex: number;
-    currentLetterIndex: number;
+    words: string[]
 }
 
-const Word = React.memo(({ word, wordIndex, currentWordIndex, currentLetterIndex }: WordType) => {
+function Word({ word, wordIndex, words }: WordType){
     return (
-        <div className='mr-5 h-14 flex items-center'>
+        <div key={wordIndex} className='mr-5 h-14 flex items-center'>
             {word.split('').map((letter, index) => (
                 <Letter
                     key={index}
                     letter={letter}
                     letterIndex={index}
-                    isActive={wordIndex === currentWordIndex && index === currentLetterIndex}
+                    wordIndex={wordIndex}
+                    words={words}
                 />
             ))}
         </div>
     );
-});
+};
 
 export default Word;

@@ -1,38 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface LetterType {
     letter: string;
     letterIndex: number;
-    isActive: boolean;
+    wordIndex:number;
+    words:string[];
 }
 
-const Letter = React.memo(({ letter, isActive }: LetterType) => {
+function Letter({ letter ,letterIndex, wordIndex, words}: LetterType) {
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+    const letterRef = useRef<any>(null);
+    const [currentWordIndex, setCurrentWordIndex] = useState(0);
+    const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
 
-    useEffect(() => {
-        if (!isActive) return;
+    // useEffect(()=>{
+    //     if(letterIndex ===0 && wordIndex === 0)
+    // },[])
 
-        function handleKeyPress(event: KeyboardEvent) {
-            if (event.key === letter) {
-                setIsCorrect(true);
+    function onKeyUpHandler(event: any, index: number) {
+        if (!words[currentWordIndex]) return;
+console.log(index);
+
+        const letter = event.key;
+        const expectedLetter = letterRef.current?.innerHTML;
+        console.log(letter + ' ' + expectedLetter);
+
+        if (letter === expectedLetter) {
+            if (currentLetterIndex + 1 < words[currentWordIndex].length) {
+                setCurrentLetterIndex((prev) => prev + 1);
             } else {
-                setIsCorrect(false);
+                setCurrentWordIndex((prev) => prev + 1);
+                setCurrentLetterIndex(0);
             }
         }
 
-        window.addEventListener('keyup', handleKeyPress);
-        return () => window.removeEventListener('keyup', handleKeyPress);
-    }, [isActive, letter]);
+        console.log(currentWordIndex + ' ' + currentLetterIndex);
+        
+    }
 
     return (
         <div
-            className={`letter cursor-default px-1 ${
-                isActive ? 'bg-blue-300 text-black' : 'text-gray-500'
-            } ${isCorrect === true ? 'text-green-500' : isCorrect === false ? 'text-red-500' : ''}`}
+            key={letterIndex}
+            className=''
+            tabIndex={0} 
+            ref={letterRef} 
+            onKeyUp={(e : any, index: number)=>onKeyUpHandler(e, index)}
         >
             {letter}
         </div>
     );
-});
+}
 
 export default Letter;
