@@ -1,7 +1,7 @@
-/* #wordsDiv:focus #outOfFocusWarning{
+#wordsDiv:focus #outOfFocusWarning{
     display: none;
 }
 
 #wordsDiv:focus #words{
     filter: blur(0);
-} */
+}

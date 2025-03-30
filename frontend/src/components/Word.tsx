@@ -3,19 +3,22 @@ import Letter from './Letter';
 interface WordType {
     word: string;
     wordIndex: number;
-    words: string[]
+    currentWordIndex: number;
+    currentLetterIndex: number;
+    isCorrect: boolean|null
 }
 
-function Word({ word, wordIndex, words }: WordType){
+function Word({ word, wordIndex, currentWordIndex, currentLetterIndex, isCorrect}: WordType){
     return (
         <div key={wordIndex} className='mr-5 h-14 flex items-center'>
-            {word.split('').map((letter, index) => (
+            {word && word.split('').map((letter, index) => (
                 <Letter
                     key={index}
                     letter={letter}
                     letterIndex={index}
                     wordIndex={wordIndex}
-                    words={words}
+                    currentWordIndex={currentWordIndex}
+                    currentLetterIndex={currentLetterIndex}
                 />
             ))}
         </div>

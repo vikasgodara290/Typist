@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import english10k from '../assets/english_10k.json';
 import Word from './Word';
 
@@ -8,6 +8,10 @@ interface WordsType {
 
 export default function Words({ noOfWords }: WordsType) {
     const [words, setWords] = useState<string[]>([]);
+    const wordDivRef = useRef<HTMLDivElement>(null);
+    const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
+    const [currentLetterIndex, setCurrentLetterIndex] = useState<number>(0);
+    const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
     useEffect(() => {
         let wordsTemp: string[] = [];
@@ -18,19 +22,42 @@ export default function Words({ noOfWords }: WordsType) {
         setWords(wordsTemp);
     }, [noOfWords]);
 
+    function onKeyUpHandler(e:any){
+        if(e.key == ' '){
+            setCurrentLetterIndex(0);
+            setCurrentWordIndex(currentWordIndex+1);
+            return;
+        }
+
+        if(e.key !== words[currentWordIndex].charAt(currentLetterIndex)){
+            setIsCorrect(false)
+        }
+        else{
+            setIsCorrect(true);
+        }
+
+        if(words[currentWordIndex].length > currentLetterIndex){
+            setCurrentLetterIndex(currentLetterIndex+1);
+        }
+
+        console.log(isCorrect+' '+e.key + '  '+ words[currentWordIndex].charAt(currentLetterIndex) + ' '+ currentWordIndex + ' '+currentLetterIndex+ ' '+ words[currentWordIndex].length);
+    }
+
     return (
         <div className='flex items-center h-screen'>
-            <div id='wordsDiv'>
-                {/* <div id='outOfFocusWarning' className='absolute flex justify-center items-center w-11/12 h-42 text-2xl'>
+            <div id='wordsDiv' tabIndex={1} ref={wordDivRef} onKeyUp={onKeyUpHandler}>
+                <div id='outOfFocusWarning' className='absolute flex justify-center items-center w-11/12 h-42 text-2xl'>
                     Click here or press any key to focus
-                </div> */}
-                <div id='words' className='relative flex w-11/12 mx-auto h-42 flex-wrap text-4xl text-gray-500 overflow-hidden'>
-                    {words.map((word, index) => (
+                </div>
+                <div id='words' className='relative flex w-11/12 mx-auto h-42 flex-wrap text-4xl text-gray-500 overflow-hidden blur-[5px]'>
+                    {words && words.map((word, index) => (
                         <Word
                             key={index}
                             word={word}
                             wordIndex={index}
-                            words={words}
+                            currentWordIndex={currentWordIndex}
+                            currentLetterIndex={currentLetterIndex}
+                            isCorrect={isCorrect}
                         />
                     ))}
                 </div>
