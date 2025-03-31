@@ -22,7 +22,8 @@ export default function Words({ noOfWords }: WordsType) {
         setWords(wordsTemp);
     }, [noOfWords]);
 
-    function onKeyUpHandler(e:any){
+    function onKeyUpHandler(e:React.KeyboardEvent<HTMLDivElement>){
+        
         if(e.key == ' '){
             setCurrentLetterIndex(0);
             setCurrentWordIndex(currentWordIndex+1);
@@ -42,6 +43,7 @@ export default function Words({ noOfWords }: WordsType) {
 
         console.log(isCorrect+' '+e.key + '  '+ words[currentWordIndex].charAt(currentLetterIndex) + ' '+ currentWordIndex + ' '+currentLetterIndex+ ' '+ words[currentWordIndex].length);
     }
+    document.addEventListener('keyup', ()=>{wordDivRef.current?.focus();})
 
     return (
         <div className='flex items-center h-screen'>

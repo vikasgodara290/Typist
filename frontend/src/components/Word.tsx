@@ -19,6 +19,7 @@ function Word({ word, wordIndex, currentWordIndex, currentLetterIndex, isCorrect
                     wordIndex={wordIndex}
                     currentWordIndex={currentWordIndex}
                     currentLetterIndex={currentLetterIndex}
+                    isCorrect={isCorrect}
                 />
             ))}
         </div>
