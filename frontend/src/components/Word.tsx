@@ -9,6 +9,9 @@ interface WordType {
 }
 
 function Word({ word, wordIndex, currentWordIndex, currentLetterIndex, isCorrect}: WordType){
+    //render check
+    console.log('Word Render');
+
     return (
         <div key={wordIndex} className='mr-5 h-14 flex items-center'>
             {word && word.split('').map((letter, index) => (

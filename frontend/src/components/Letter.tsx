@@ -1,5 +1,3 @@
-import { useState, useEffect, useRef } from 'react';
-
 interface LetterType {
     letter: string;
     letterIndex: number;
@@ -10,9 +8,12 @@ interface LetterType {
 }
 
 function Letter({ letter ,letterIndex, wordIndex, currentWordIndex, currentLetterIndex, isCorrect }: LetterType) {
-    console.log(isCorrect+ ' '+ currentWordIndex + ' '+currentLetterIndex+ ' ');
+    //console.log(isCorrect+ ' '+ currentWordIndex + ' '+currentLetterIndex+ ' ');
     let textColor = 'text-red-400';
     
+    //render check
+    console.log('Letter Render');
+
     return (
         <div key={letterIndex} className={`${currentWordIndex === wordIndex && letterIndex === currentWordIndex && isCorrect===false && textColor}`}>
             {letter && letter}

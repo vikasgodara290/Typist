@@ -12,6 +12,7 @@ export default function Words({ noOfWords }: WordsType) {
     const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
     const [currentLetterIndex, setCurrentLetterIndex] = useState<number>(0);
     const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+    const [isCompleteRender, setIsCompleteRender] = useState<boolean>(false);
 
     useEffect(() => {
         let wordsTemp: string[] = [];
@@ -21,9 +22,13 @@ export default function Words({ noOfWords }: WordsType) {
         }
         setWords(wordsTemp);
     }, [noOfWords]);
+    
+    //When words changes : complete re-render else re-render a single word only
+    useEffect(()=>{
+        setIsCompleteRender(true);
+    },[words])
 
-    function onKeyUpHandler(e:React.KeyboardEvent<HTMLDivElement>){
-        
+    function onKeyUpHandler(e:React.KeyboardEvent<HTMLDivElement>){        
         if(e.key == ' '){
             setCurrentLetterIndex(0);
             setCurrentWordIndex(currentWordIndex+1);
@@ -41,9 +46,12 @@ export default function Words({ noOfWords }: WordsType) {
             setCurrentLetterIndex(currentLetterIndex+1);
         }
 
-        console.log(isCorrect+' '+e.key + '  '+ words[currentWordIndex].charAt(currentLetterIndex) + ' '+ currentWordIndex + ' '+currentLetterIndex+ ' '+ words[currentWordIndex].length);
+        //console.log(isCorrect+' '+e.key + '  '+ words[currentWordIndex].charAt(currentLetterIndex) + ' '+ currentWordIndex + ' '+currentLetterIndex+ ' '+ words[currentWordIndex].length);
     }
     document.addEventListener('keyup', ()=>{wordDivRef.current?.focus();})
+
+    //render check
+    console.log('Words Render ' + isCompleteRender);
 
     return (
         <div className='flex items-center h-screen'>
@@ -52,7 +60,7 @@ export default function Words({ noOfWords }: WordsType) {
                     Click here or press any key to focus
                 </div>
                 <div id='words' className='relative flex w-11/12 mx-auto h-42 flex-wrap text-4xl text-gray-500 overflow-hidden blur-[5px]'>
-                    {words && words.map((word, index) => (
+                    {words && isCompleteRender && words.map((word, index) => (
                         <Word
                             key={index}
                             word={word}
