@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface LetterType {
     letter: string;
@@ -22,7 +22,20 @@ const Letter = ({
 
     useEffect(() => {
         //console.log(typedLetter, letter, letterIndex , currentLetterIndex - 1, wordIndex , currentWordIndex);
-        
+    
+        if(typedLetter === "Backspace"){
+            console.log(typedLetter, currentLetterIndex, letter);
+            if(letterIndex === currentLetterIndex - 1 && wordIndex === currentWordIndex){
+                console.log(letter);
+
+                setCarrot("border-r-3 border-amber-500")
+            }
+            if(letterIndex === currentLetterIndex && wordIndex === currentWordIndex){
+                setletterColor("text-gray-500");
+                setCarrot("border-r-3 border-white")
+            }
+            return;
+        }
         if (typedLetter !== "" && ( letterIndex === currentLetterIndex - 1 ) && wordIndex === currentWordIndex) {
             setCarrot("border-r-3 border-amber-500")
             if (typedLetter !== letter) {

@@ -39,6 +39,26 @@ const Words = ({ noOfWords }: WordsType) => {
             return;
         }
 
+        if(e.key === "Backspace"){
+            if(currentLetterIndex > 0){
+                setCurrentLetterIndex(curr => curr - 1)
+            }
+            else{
+                if(currentWordIndex > 0){
+                    // setCurrentWordIndex(curr => curr - 1)
+                    // setCurrentLetterIndex(words[currentWordIndex - 1].length - 1 )
+                    setCurrentWordIndex(curr => {
+                        const newWordIndex = curr - 1;
+                        setCurrentLetterIndex(words[newWordIndex].length - 1);
+                        return newWordIndex;
+                      });
+                      
+                }
+            }
+            setTypedLetter(e.key)
+            return;
+        }
+
         // if (e.key !== words[currentWordIndex].charAt(currentLetterIndex)) {
         //     setIsCorrect(false);
         // } else {
