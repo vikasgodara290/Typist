@@ -1,30 +1,36 @@
-import Letter from './Letter';
+import Letter from "./Letter";
 
 interface WordType {
     word: string;
     wordIndex: number;
     currentWordIndex: number;
     currentLetterIndex: number;
-    isCorrect: boolean|null
+    typedLetter: string;
 }
 
-function Word({ word, wordIndex, currentWordIndex, currentLetterIndex, isCorrect}: WordType){
-    //render check
-    console.log('Word Render');
-
+const Word = ({
+    word,
+    wordIndex,
+    currentWordIndex,
+    currentLetterIndex,
+    typedLetter,
+}: WordType) => {
     return (
-        <div key={wordIndex} className='mr-5 h-14 flex items-center'>
-            {word && word.split('').map((letter, index) => (
-                <Letter
-                    key={index}
-                    letter={letter}
-                    letterIndex={index}
-                    wordIndex={wordIndex}
-                    currentWordIndex={currentWordIndex}
-                    currentLetterIndex={currentLetterIndex}
-                    isCorrect={isCorrect}
-                />
-            ))}
+        <div key={wordIndex} className="mr-5 h-14 flex items-center">
+            {word &&
+                word
+                    .split("")
+                    .map((letter, index) => (
+                        <Letter
+                            key={index}
+                            letter={letter}
+                            letterIndex={index}
+                            wordIndex={wordIndex}
+                            currentWordIndex={currentWordIndex}
+                            currentLetterIndex={currentLetterIndex}
+                            typedLetter={typedLetter}
+                        />
+                    ))}
         </div>
     );
 };
