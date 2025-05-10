@@ -10,7 +10,7 @@ const Words = ({ noOfWords }: WordsType) => {
     const [words, setWords] = useState<string[]>([]);
     const wordDivRef = useRef<HTMLDivElement>(null);
     const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
-    const [currentLetterIndex, setCurrentLetterIndex] = useState<number>(-1);
+    const [currentLetterIndex, setCurrentLetterIndex] = useState<number>(0);
     //const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
     const [typedLetter, setTypedLetter] = useState<string>("");
 
@@ -38,7 +38,7 @@ const Words = ({ noOfWords }: WordsType) => {
             setCurrentWordIndex(currentWordIndex + 1);
             return;
         }
-        
+
         // if (e.key !== words[currentWordIndex].charAt(currentLetterIndex)) {
         //     setIsCorrect(false);
         // } else {
@@ -63,6 +63,7 @@ const Words = ({ noOfWords }: WordsType) => {
                 tabIndex={1}
                 ref={wordDivRef}
                 onKeyUp={onKeyUpHandler}
+                className="outline-none"
             >
                 <div
                     id="outOfFocusWarning"
