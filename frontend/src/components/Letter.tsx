@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface LetterType {
     letter: string;
@@ -7,6 +7,8 @@ interface LetterType {
     currentWordIndex: number;
     currentLetterIndex: number;
     typedLetter: string;
+    setCurrentLetterPos : any,
+    wordLength : number
 }
 
 const Letter = ({
@@ -16,41 +18,65 @@ const Letter = ({
     currentWordIndex,
     currentLetterIndex,
     typedLetter,
+    setCurrentLetterPos,
+    wordLength
 }: LetterType) => {
     const [letterColor, setletterColor] = useState<string>("");
-    const [carrot, setCarrot] = useState<string>("border-r-3 border-white");
-
+    const letterRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
-        //console.log(typedLetter, letter, letterIndex , currentLetterIndex - 1, wordIndex , currentWordIndex);
+        
     
         if(typedLetter === "Backspace"){
-            console.log(typedLetter, currentLetterIndex, letter);
+            //console.log(typedLetter, currentLetterIndex, letter);
             if(letterIndex === currentLetterIndex - 1 && wordIndex === currentWordIndex){
-                console.log(letter);
+                //console.log(letter);
 
-                setCarrot("border-r-3 border-amber-500")
+                //setCarrot("border-r-3 border-amber-500")
             }
             if(letterIndex === currentLetterIndex && wordIndex === currentWordIndex){
                 setletterColor("text-gray-500");
-                setCarrot("border-r-3 border-white")
+                //setCarrot("border-r-3 border-white")
+                const x = letterRef.current?.getBoundingClientRect().x;
+            const y = letterRef.current?.getBoundingClientRect().y;
+            setCurrentLetterPos({x : x, y : y})
             }
             return;
         }
         if (typedLetter !== "" && ( letterIndex === currentLetterIndex - 1 ) && wordIndex === currentWordIndex) {
-            setCarrot("border-r-3 border-amber-500")
+            //setCarrot("border-r-3 border-amber-500")
+            
             if (typedLetter !== letter) {
                 setletterColor("text-red-300");
             } else {
                 setletterColor("text-black");
             }
         }
+        if (typedLetter !== "" && ( letterIndex === currentLetterIndex) && wordIndex === currentWordIndex) {
+            //setCarrot("border-r-3 border-amber-500")
+            //letterRef.current?.focus()
+            // console.log(typedLetter, letter, letterIndex , currentLetterIndex, wordIndex , currentWordIndex);
+            // console.log(letterRef.current?.getBoundingClientRect());
+            const x = letterRef.current?.getBoundingClientRect().x;
+            const y = letterRef.current?.getBoundingClientRect().y;
+            setCurrentLetterPos({x : x, y : y})
+        }
+        if (typedLetter !== "" && ( letterIndex === currentLetterIndex - 1) && (currentLetterIndex === wordLength) && wordIndex === currentWordIndex) {
+            //setCarrot("border-r-3 border-amber-500")
+            //letterRef.current?.focus()
+            console.log(typedLetter, letter, letterIndex , currentLetterIndex, wordIndex , currentWordIndex, wordLength);
+            console.log(letterRef.current?.getBoundingClientRect());
+            setCurrentLetterPos((curr : {x : number, y: number}) => {
+                return {x : curr.x + 22, y : curr.y}
+            })
+        }
+
         else{
-            setCarrot("border-r-3 border-white")
+            //setCarrot("border-r-3 border-white")
         }
     }, [currentLetterIndex, currentWordIndex]);
 
     return (
-        <div key={letterIndex} className={`${letterColor} ${carrot}`}>
+        <div key={letterIndex} className={`${letterColor} w-5.5 roboto-mono-400`} ref={letterRef} >
             {letter && letter}
         </div>
     );

@@ -8,12 +8,14 @@ interface WordsType {
 
 const Words = ({ noOfWords }: WordsType) => {
     const [words, setWords] = useState<string[]>([]);
-    const wordDivRef = useRef<HTMLDivElement>(null);
+    const wordsDivRef = useRef<HTMLDivElement>(null);
     const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
     const [currentLetterIndex, setCurrentLetterIndex] = useState<number>(0);
-    //const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
     const [typedLetter, setTypedLetter] = useState<string>("");
-
+    const [carrotMargin, setCarrotMargin] = useState<number>(72);
+    const [currentLetterPos, setCurrentLetterPos] = useState<{x : number, y : number}>({x: 72, y: 328})
+    
+//-------------------------------------------------------------------------------------------------------//
     //What is difference between mount and re-render?
     /*
         Mount : Very first time created and inserted into DOM.
@@ -31,57 +33,91 @@ const Words = ({ noOfWords }: WordsType) => {
         //This is clean up code on unmounting the Words component
         return;
     }, [noOfWords]);
+//-------------------------------------------------------------------------------------------------------//
 
+//-------------------------------------------------------------------------------------------------------//
     function onKeyUpHandler(e: React.KeyboardEvent<HTMLDivElement>) {
         if (e.key == " ") {
             setCurrentLetterIndex(0);
-            setCurrentWordIndex(currentWordIndex + 1);
+            setCurrentWordIndex((curr) => 
+                {
+                    setCarrotMargin(currm => currm + 22)
+                    return curr + 1
+                });
+            
             return;
         }
 
-        if(e.key == "Shift"){
+        if (e.key == "Shift") {
             return;
         }
 
-        if(e.key === "Backspace"){
-            if(currentLetterIndex > 0){
-                setCurrentLetterIndex(curr => curr - 1)
-            }
-            else{
-                if(currentWordIndex > 0){
+        if (e.key === "Backspace") {
+            if (currentLetterIndex > 0) {
+                setCurrentLetterIndex((curr) => {
+                    setCarrotMargin(currm => currm - 22)
+                    return curr - 1
+                });
+                
+            } else {
+                if (currentWordIndex > 0) {
                     // setCurrentWordIndex(curr => curr - 1)
                     // setCurrentLetterIndex(words[currentWordIndex - 1].length - 1 )
-                    setCurrentWordIndex(curr => {
+                    setCurrentWordIndex((curr) => {
                         const newWordIndex = curr - 1;
-                        setCurrentLetterIndex(words[newWordIndex].length - 1);
+                        setCurrentLetterIndex(words[newWordIndex].length);
+                        setCarrotMargin(currm => currm - 22)
                         return newWordIndex;
-                      });
-                      
+                    });
+                    
                 }
             }
-            setTypedLetter(e.key)
+            setTypedLetter(e.key);
             return;
         }
-
+        setCarrotMargin(curr => curr + 11)
         setTypedLetter(e.key);
 
         if (words[currentWordIndex].length > currentLetterIndex) {
-            setCurrentLetterIndex(currentLetterIndex + 1);
+            setCurrentLetterIndex(curr => {
+                setCarrotMargin(currm => currm + 11)
+                return curr + 1
+            });
         }
     }
+//-------------------------------------------------------------------------------------------------------//
 
+
+//-------------------------------------------------------------------------------------------------------//
     document.addEventListener("keyup", () => {
-        wordDivRef.current?.focus();
+        wordsDivRef.current?.focus();
     });
+//-------------------------------------------------------------------------------------------------------//
+
+//-------------------------------------------------------------------------------------------------------//
+/*Detect that carrot is on end of 2nd line and user pressed space*/
+// if(wordsDivRef.current){
+//     const containerTop = wordsDivRef.current!.getBoundingClientRect().top;
+//     console.log(containerTop);
+// }
+
+// if(wordSpanRef.current){
+//     console.log(wordSpanRef.current);
+//     const wordtp = wordSpanRef.current!.getBoundingClientRect().top
+//     console.log("word" ,wordtp);
+    
+// }
+
+//-------------------------------------------------------------------------------------------------------//
 
     return (
-        <div className="flex items-center h-screen">
+        <div className=" h-screen">
             <div
                 id="wordsDiv"
                 tabIndex={1}
-                ref={wordDivRef}
+                ref={wordsDivRef}
                 onKeyUp={onKeyUpHandler}
-                className="outline-none"
+                className="outline-none fixed h-42 mt-80"
             >
                 <div
                     id="outOfFocusWarning"
@@ -89,22 +125,27 @@ const Words = ({ noOfWords }: WordsType) => {
                 >
                     Click here or press any key to focus
                 </div>
+                <div id="carrot" className={`absolute w-1 h-10 bg-amber-500 rounded-2xl`}
+                style={{ marginLeft: currentLetterPos.x, marginTop: currentLetterPos.y - 320} }>
+
+                </div>
                 <div
                     id="words"
-                    className="relative flex w-11/12 mx-auto h-42 flex-wrap text-4xl text-gray-500 overflow-hidden blur-[5px]"
+                    className="flex w-11/12 mx-18 h-42 flex-wrap text-4xl text-gray-500 overflow-hidden blur-[5px]"
                 >
                     {/*Using indexes as keys are not a good way to build
                     Use either id of word from db
                     or UUID*/}
                     {words &&
                         words.map((word, index) => (
-                            <Word
+                            word && <Word
                                 key={index}
-                                word={word}
+                                word={word.trim()}
                                 wordIndex={index}
                                 currentWordIndex={currentWordIndex}
                                 currentLetterIndex={currentLetterIndex}
                                 typedLetter={typedLetter}
+                                setCurrentLetterPos = {setCurrentLetterPos}
                             />
                         ))}
                 </div>

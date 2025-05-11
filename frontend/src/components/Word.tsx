@@ -6,6 +6,7 @@ interface WordType {
     currentWordIndex: number;
     currentLetterIndex: number;
     typedLetter: string;
+    setCurrentLetterPos : any;
 }
 
 const Word = ({
@@ -14,9 +15,10 @@ const Word = ({
     currentWordIndex,
     currentLetterIndex,
     typedLetter,
+    setCurrentLetterPos
 }: WordType) => {
     return (
-        <div key={wordIndex} className="mr-5 h-14 flex items-center">
+        <div key={wordIndex} className="mr-5.5 h-14 flex items-center">
             {word &&
                 word
                     .split("")
@@ -29,6 +31,8 @@ const Word = ({
                             currentWordIndex={currentWordIndex}
                             currentLetterIndex={currentLetterIndex}
                             typedLetter={typedLetter}
+                            setCurrentLetterPos={setCurrentLetterPos}
+                            wordLength={word.length}
                         />
                     ))}
         </div>
