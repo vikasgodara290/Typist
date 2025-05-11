@@ -39,6 +39,10 @@ const Words = ({ noOfWords }: WordsType) => {
             return;
         }
 
+        if(e.key == "Shift"){
+            return;
+        }
+
         if(e.key === "Backspace"){
             if(currentLetterIndex > 0){
                 setCurrentLetterIndex(curr => curr - 1)
@@ -58,12 +62,6 @@ const Words = ({ noOfWords }: WordsType) => {
             setTypedLetter(e.key)
             return;
         }
-
-        // if (e.key !== words[currentWordIndex].charAt(currentLetterIndex)) {
-        //     setIsCorrect(false);
-        // } else {
-        //     setIsCorrect(true);
-        // }
 
         setTypedLetter(e.key);
 
