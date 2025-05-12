@@ -36,7 +36,7 @@ const Words = ({ noOfWords }: WordsType) => {
 //-------------------------------------------------------------------------------------------------------//
 
 //-------------------------------------------------------------------------------------------------------//
-    function onKeyUpHandler(e: React.KeyboardEvent<HTMLDivElement>) {
+    function onKeyDownHandler(e: React.KeyboardEvent<HTMLDivElement>) {
         if (e.key == " ") {
             setCurrentLetterIndex(0);
             setCurrentWordIndex((curr) => 
@@ -47,8 +47,8 @@ const Words = ({ noOfWords }: WordsType) => {
             
             return;
         }
-
-        if (e.key == "Shift") {
+        
+        if(e.key == "Shift"){
             return;
         }
 
@@ -116,7 +116,7 @@ const Words = ({ noOfWords }: WordsType) => {
                 id="wordsDiv"
                 tabIndex={1}
                 ref={wordsDivRef}
-                onKeyUp={onKeyUpHandler}
+                onKeyDown={onKeyDownHandler}
                 className="outline-none fixed h-42 mt-80"
             >
                 <div
