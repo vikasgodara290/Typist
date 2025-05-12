@@ -21,7 +21,7 @@ const Letter = ({
     setCurrentLetterPos,
     wordLength
 }: LetterType) => {
-    const [letterColor, setletterColor] = useState<string>("");
+    const [letterColor, setletterColor] = useState<string>("text-txtColor");
     const letterRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         
@@ -34,7 +34,7 @@ const Letter = ({
                 //setCarrot("border-r-3 border-amber-500")
             }
             if(letterIndex === currentLetterIndex && wordIndex === currentWordIndex){
-                setletterColor("text-gray-500");
+                setletterColor("text-txtColor");
                 //setCarrot("border-r-3 border-white")
                 const x = letterRef.current?.getBoundingClientRect().x;
             const y = letterRef.current?.getBoundingClientRect().y;
@@ -46,9 +46,9 @@ const Letter = ({
             //setCarrot("border-r-3 border-amber-500")
             
             if (typedLetter !== letter) {
-                setletterColor("text-red-300");
+                setletterColor("text-wrongTxt");
             } else {
-                setletterColor("text-black");
+                setletterColor("text-correctTxt");
             }
         }
         if (typedLetter !== "" && ( letterIndex === currentLetterIndex) && wordIndex === currentWordIndex) {

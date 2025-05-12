@@ -111,7 +111,7 @@ const Words = ({ noOfWords }: WordsType) => {
 //-------------------------------------------------------------------------------------------------------//
 
     return (
-        <div className=" h-screen">
+        <div className=" h-screen bg-bgColor">
             <div
                 id="wordsDiv"
                 tabIndex={1}
@@ -121,17 +121,17 @@ const Words = ({ noOfWords }: WordsType) => {
             >
                 <div
                     id="outOfFocusWarning"
-                    className="absolute flex justify-center items-center w-11/12 h-42 text-2xl"
+                    className="absolute flex justify-center items-center w-11/12 h-42 text-2xl text-correctTxt"
                 >
                     Click here or press any key to focus
                 </div>
-                <div id="carrot" className={`absolute w-1 h-10 bg-amber-500 rounded-2xl`}
-                style={{ marginLeft: currentLetterPos.x, marginTop: currentLetterPos.y - 320} }>
+                <div id="carrot" className={`absolute w-1 h-10 bg-amber-500 rounded-2xl duration-200`}
+                style={{ transform: `translate(${currentLetterPos.x}px, ${currentLetterPos.y - 320}px)` }}>
 
                 </div>
                 <div
                     id="words"
-                    className="flex w-11/12 mx-18 h-42 flex-wrap text-4xl text-gray-500 overflow-hidden blur-[5px]"
+                    className="flex w-11/12 mx-18 h-42 flex-wrap text-4xl overflow-hidden blur-[5px]"
                 >
                     {/*Using indexes as keys are not a good way to build
                     Use either id of word from db
