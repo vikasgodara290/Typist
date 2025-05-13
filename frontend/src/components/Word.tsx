@@ -1,4 +1,6 @@
+import { useMemo } from "react";
 import Letter from "./Letter";
+import { v4 as uuidv4 } from "uuid";
 
 interface WordType {
     word: string;
@@ -6,7 +8,7 @@ interface WordType {
     currentWordIndex: number;
     currentLetterIndex: number;
     typedLetter: string;
-    setCurrentLetterPos : any;
+    setCurrentLetterPos: any;
 }
 
 const Word = ({
@@ -15,17 +17,21 @@ const Word = ({
     currentWordIndex,
     currentLetterIndex,
     typedLetter,
-    setCurrentLetterPos
+    setCurrentLetterPos,
 }: WordType) => {
+    const letterWithIds = useMemo(
+        () => word.split("").map((letter) => ({ id: uuidv4(), letter })),
+        [word]
+    );
+
     return (
         <div key={wordIndex} className="mr-5.5 h-14 flex items-center">
             {word &&
-                word
-                    .split("")
+                letterWithIds
                     .map((letter, index) => (
                         <Letter
-                            key={index}
-                            letter={letter}
+                            key={letter.id}
+                            letter={letter.letter}
                             letterIndex={index}
                             wordIndex={wordIndex}
                             currentWordIndex={currentWordIndex}

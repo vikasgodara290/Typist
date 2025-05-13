@@ -7,8 +7,8 @@ interface LetterType {
     currentWordIndex: number;
     currentLetterIndex: number;
     typedLetter: string;
-    setCurrentLetterPos : any,
-    wordLength : number
+    setCurrentLetterPos: any;
+    wordLength: number;
 }
 
 const Letter = ({
@@ -19,64 +19,83 @@ const Letter = ({
     currentLetterIndex,
     typedLetter,
     setCurrentLetterPos,
-    wordLength
+    wordLength,
 }: LetterType) => {
     const [letterColor, setletterColor] = useState<string>("text-txtColor");
     const letterRef = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        
     
-        if(typedLetter === "Backspace"){
+    useEffect(() => {
+        if (typedLetter === "Backspace") {
             //console.log(typedLetter, currentLetterIndex, letter);
-            if(letterIndex === currentLetterIndex - 1 && wordIndex === currentWordIndex){
+            if (
+                letterIndex === currentLetterIndex - 1 &&
+                wordIndex === currentWordIndex
+            ) {
                 //console.log(letter);
-
                 //setCarrot("border-r-3 border-amber-500")
             }
-            if(letterIndex === currentLetterIndex && wordIndex === currentWordIndex){
+            if (
+                letterIndex === currentLetterIndex &&
+                wordIndex === currentWordIndex
+            ) {
                 setletterColor("text-txtColor");
                 //setCarrot("border-r-3 border-white")
                 const x = letterRef.current?.getBoundingClientRect().x;
-            const y = letterRef.current?.getBoundingClientRect().y;
-            setCurrentLetterPos({x : x, y : y})
+                const y = letterRef.current?.getBoundingClientRect().y;
+                setCurrentLetterPos({ x: x, y: y });
             }
             return;
         }
-        if (typedLetter !== "" && ( letterIndex === currentLetterIndex - 1 ) && wordIndex === currentWordIndex) {
+        if (
+            typedLetter !== "" &&
+            letterIndex === currentLetterIndex - 1 &&
+            wordIndex === currentWordIndex
+        ) {
             //setCarrot("border-r-3 border-amber-500")
-            
+
             if (typedLetter !== letter) {
                 setletterColor("text-wrongTxt");
             } else {
                 setletterColor("text-correctTxt");
             }
         }
-        if (typedLetter !== "" && ( letterIndex === currentLetterIndex) && wordIndex === currentWordIndex) {
+        if (
+            typedLetter !== "" &&
+            letterIndex === currentLetterIndex &&
+            wordIndex === currentWordIndex
+        ) {
             //setCarrot("border-r-3 border-amber-500")
             //letterRef.current?.focus()
             // console.log(typedLetter, letter, letterIndex , currentLetterIndex, wordIndex , currentWordIndex);
             // console.log(letterRef.current?.getBoundingClientRect());
             const x = letterRef.current?.getBoundingClientRect().x;
             const y = letterRef.current?.getBoundingClientRect().y;
-            setCurrentLetterPos({x : x, y : y})
+            setCurrentLetterPos({ x: x, y: y });
         }
-        if (typedLetter !== "" && ( letterIndex === currentLetterIndex - 1) && (currentLetterIndex === wordLength) && wordIndex === currentWordIndex) {
+        if (
+            typedLetter !== "" &&
+            letterIndex === currentLetterIndex - 1 &&
+            currentLetterIndex === wordLength &&
+            wordIndex === currentWordIndex
+        ) {
             //setCarrot("border-r-3 border-amber-500")
             //letterRef.current?.focus()
-            console.log(typedLetter, letter, letterIndex , currentLetterIndex, wordIndex , currentWordIndex, wordLength);
-            console.log(letterRef.current?.getBoundingClientRect());
-            setCurrentLetterPos((curr : {x : number, y: number}) => {
-                return {x : curr.x + 22, y : curr.y}
-            })
-        }
-
-        else{
+            // console.log(typedLetter, letter, letterIndex , currentLetterIndex, wordIndex , currentWordIndex, wordLength);
+            // console.log(letterRef.current?.getBoundingClientRect());
+            setCurrentLetterPos((curr: { x: number; y: number }) => {
+                return { x: curr.x + 22, y: curr.y };
+            });
+        } else {
             //setCarrot("border-r-3 border-white")
         }
-    }, [currentLetterIndex, currentWordIndex]);
+        
+    }, [currentLetterIndex, currentWordIndex, typedLetter]);
 
     return (
-        <div key={letterIndex} className={`${letterColor} w-5.5 roboto-mono-400`} ref={letterRef} >
+        <div
+            className={`${letterColor} w-5.5 roboto-mono-400`}
+            ref={letterRef}
+        >
             {letter && letter}
         </div>
     );

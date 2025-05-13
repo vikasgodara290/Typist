@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import english10k from "../assets/english_10k.json";
 import Word from "./Word";
+import { v4 as uuidv4 } from "uuid";
 
 interface WordsType {
     noOfWords: number;
@@ -12,9 +13,13 @@ const Words = ({ noOfWords }: WordsType) => {
     const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
     const [currentLetterIndex, setCurrentLetterIndex] = useState<number>(0);
     const [typedLetter, setTypedLetter] = useState<string>("");
-    const [currentLetterPos, setCurrentLetterPos] = useState<{x : number, y : number}>({x: 72, y: 328})
-    
-//-------------------------------------------------------------------------------------------------------//
+    const [currentLetterPos, setCurrentLetterPos] = useState<{
+        x: number;
+        y: number;
+    }>({ x: 72, y: 328 });
+    const [wordsRemoved, setWordsRemoved] = useState<number>(0);
+    const [wordsInFirstLine, setWordsnFirstLine] = useState<number>(0);
+    //-------------------------------------------------------------------------------------------------------//
     //What is difference between mount and re-render?
     /*
         Mount : Very first time created and inserted into DOM.
@@ -30,26 +35,25 @@ const Words = ({ noOfWords }: WordsType) => {
         setWords(wordsTemp);
 
         //This is clean up code on unmounting the Words component
-        return;
+        return console.log("hi there");
     }, [noOfWords]);
-//-------------------------------------------------------------------------------------------------------//
+    //-------------------------------------------------------------------------------------------------------//
 
-//-------------------------------------------------------------------------------------------------------//
+    //-------------------------------------------------------------------------------------------------------//
     function onKeyDownHandler(e: React.KeyboardEvent<HTMLDivElement>) {
         if (e.key == " ") {
             setCurrentLetterIndex(0);
-            setCurrentWordIndex(curr => curr + 1);
+            setCurrentWordIndex((curr) => curr + 1);
             return;
         }
-        
-        if(e.key == "Shift"){
+
+        if (e.key == "Shift") {
             return;
         }
 
         if (e.key === "Backspace") {
             if (currentLetterIndex > 0) {
-                setCurrentLetterIndex(curr => curr - 1);
-                
+                setCurrentLetterIndex((curr) => curr - 1);
             } else {
                 if (currentWordIndex > 0) {
                     // setCurrentWordIndex(curr => curr - 1)
@@ -59,43 +63,48 @@ const Words = ({ noOfWords }: WordsType) => {
                         setCurrentLetterIndex(words[newWordIndex].length);
                         return newWordIndex;
                     });
-                    
                 }
             }
             setTypedLetter(e.key);
             return;
         }
-        
+
         setTypedLetter(e.key);
 
         if (words[currentWordIndex].length > currentLetterIndex) {
-            setCurrentLetterIndex(curr => curr + 1);
+            setCurrentLetterIndex((curr) => curr + 1);
         }
     }
-//-------------------------------------------------------------------------------------------------------//
+    //-------------------------------------------------------------------------------------------------------//
 
-
-//-------------------------------------------------------------------------------------------------------//
+    //-------------------------------------------------------------------------------------------------------//
     document.addEventListener("keyup", () => {
         wordsDivRef.current?.focus();
     });
-//-------------------------------------------------------------------------------------------------------//
+    //-------------------------------------------------------------------------------------------------------//
 
-//-------------------------------------------------------------------------------------------------------//
-/*Detect that carrot is on end of 2nd line and user pressed space*/
-// if(wordsDivRef.current){
-//     const containerTop = wordsDivRef.current!.getBoundingClientRect().top;
-//     console.log(containerTop);
-// }
+    //-------------------------------------------------------------------------------------------------------//
+    /*Detect that carrot is on end of 2nd line and user pressed space*/
+    useEffect(() => {
+        const { x, y } = currentLetterPos;
 
-// if(wordSpanRef.current){
-//     console.log(wordSpanRef.current);
-//     const wordtp = wordSpanRef.current!.getBoundingClientRect().top
-//     console.log("word" ,wordtp);
-    
-// }
+        if (x === 72 && y === 384) {
+            setWordsnFirstLine(currentWordIndex);
+            return;
+        }
 
-//-------------------------------------------------------------------------------------------------------//
+        if (x === 72 && y === 440) {
+            setWordsRemoved(wordsInFirstLine);
+            setCurrentLetterPos((curr) => ({ x: curr.x, y: curr.y - 56 }));
+        }
+    }, [currentLetterPos]);
+
+    //-------------------------------------------------------------------------------------------------------//
+
+    const wordsWithIds = useMemo(
+        () => words.map((word) => ({ id: uuidv4(), word })),
+        [words]
+    );
 
     return (
         <div className=" h-screen bg-bgColor">
@@ -112,10 +121,15 @@ const Words = ({ noOfWords }: WordsType) => {
                 >
                     Click here or press any key to focus
                 </div>
-                <div id="carrot" className={`absolute w-1 h-10 bg-amber-500 rounded-2xl duration-200`}
-                style={{ transform: `translate(${currentLetterPos.x}px, ${currentLetterPos.y - 320}px)` }}>
-
-                </div>
+                <div
+                    id="carrot"
+                    className={`absolute w-1 h-10 bg-amber-500 rounded-2xl duration-200`}
+                    style={{
+                        transform: `translate(${currentLetterPos.x}px, ${
+                            currentLetterPos.y - 320
+                        }px)`,
+                    }}
+                ></div>
                 <div
                     id="words"
                     className="flex w-11/12 mx-18 h-42 flex-wrap text-4xl overflow-hidden blur-[5px]"
@@ -123,18 +137,23 @@ const Words = ({ noOfWords }: WordsType) => {
                     {/*Using indexes as keys are not a good way to build
                     Use either id of word from db
                     or UUID*/}
-                    {words &&
-                        words.map((word, index) => (
-                            word && <Word
-                                key={index}
-                                word={word.trim()}
-                                wordIndex={index}
-                                currentWordIndex={currentWordIndex}
-                                currentLetterIndex={currentLetterIndex}
-                                typedLetter={typedLetter}
-                                setCurrentLetterPos = {setCurrentLetterPos}
-                            />
-                        ))}
+                    {wordsWithIds &&
+                        wordsWithIds
+                            .slice(wordsRemoved, words.length)
+                            .map(
+                                (wordObj, index) =>
+                                    wordObj.word && (
+                                        <Word
+                                            key={wordObj.id}
+                                            word={wordObj.word.trim()}
+                                            wordIndex={index + wordsRemoved}
+                                            currentWordIndex={currentWordIndex}
+                                            currentLetterIndex={currentLetterIndex}
+                                            typedLetter={typedLetter}
+                                            setCurrentLetterPos={setCurrentLetterPos}
+                                        />
+                                    )
+                            )}
                 </div>
             </div>
         </div>
