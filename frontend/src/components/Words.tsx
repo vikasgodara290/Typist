@@ -12,7 +12,6 @@ const Words = ({ noOfWords }: WordsType) => {
     const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
     const [currentLetterIndex, setCurrentLetterIndex] = useState<number>(0);
     const [typedLetter, setTypedLetter] = useState<string>("");
-    const [carrotMargin, setCarrotMargin] = useState<number>(72);
     const [currentLetterPos, setCurrentLetterPos] = useState<{x : number, y : number}>({x: 72, y: 328})
     
 //-------------------------------------------------------------------------------------------------------//
@@ -39,12 +38,7 @@ const Words = ({ noOfWords }: WordsType) => {
     function onKeyDownHandler(e: React.KeyboardEvent<HTMLDivElement>) {
         if (e.key == " ") {
             setCurrentLetterIndex(0);
-            setCurrentWordIndex((curr) => 
-                {
-                    setCarrotMargin(currm => currm + 22)
-                    return curr + 1
-                });
-            
+            setCurrentWordIndex(curr => curr + 1);
             return;
         }
         
@@ -54,10 +48,7 @@ const Words = ({ noOfWords }: WordsType) => {
 
         if (e.key === "Backspace") {
             if (currentLetterIndex > 0) {
-                setCurrentLetterIndex((curr) => {
-                    setCarrotMargin(currm => currm - 22)
-                    return curr - 1
-                });
+                setCurrentLetterIndex(curr => curr - 1);
                 
             } else {
                 if (currentWordIndex > 0) {
@@ -66,7 +57,6 @@ const Words = ({ noOfWords }: WordsType) => {
                     setCurrentWordIndex((curr) => {
                         const newWordIndex = curr - 1;
                         setCurrentLetterIndex(words[newWordIndex].length);
-                        setCarrotMargin(currm => currm - 22)
                         return newWordIndex;
                     });
                     
@@ -75,14 +65,11 @@ const Words = ({ noOfWords }: WordsType) => {
             setTypedLetter(e.key);
             return;
         }
-        setCarrotMargin(curr => curr + 11)
+        
         setTypedLetter(e.key);
 
         if (words[currentWordIndex].length > currentLetterIndex) {
-            setCurrentLetterIndex(curr => {
-                setCarrotMargin(currm => currm + 11)
-                return curr + 1
-            });
+            setCurrentLetterIndex(curr => curr + 1);
         }
     }
 //-------------------------------------------------------------------------------------------------------//
