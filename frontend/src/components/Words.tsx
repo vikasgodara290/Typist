@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import english10k from "../assets/english_10k.json";
+import english1k from "../assets/english_1k.json";
 import Word from "./Word";
 import { v4 as uuidv4 } from "uuid";
 
@@ -29,8 +29,8 @@ const Words = ({ noOfWords }: WordsType) => {
     useEffect(() => {
         let wordsTemp: string[] = [];
         for (let i = 0; i < noOfWords; i++) {
-            let randomIndex = Math.floor(Math.random() * 10000);
-            wordsTemp.push(english10k.words[randomIndex]);
+            let randomIndex = Math.floor(Math.random() * 1000);
+            wordsTemp.push(english1k.words[randomIndex]);
         }
         setWords(wordsTemp);
 
@@ -54,13 +54,15 @@ const Words = ({ noOfWords }: WordsType) => {
         if (e.key === "Backspace") {
             if (currentLetterIndex > 0) {
                 setCurrentLetterIndex((curr) => curr - 1);
+                console.log('i ma here');
+                
             } else {
                 if (currentWordIndex > 0) {
                     // setCurrentWordIndex(curr => curr - 1)
                     // setCurrentLetterIndex(words[currentWordIndex - 1].length - 1 )
                     setCurrentWordIndex((curr) => {
                         const newWordIndex = curr - 1;
-                        setCurrentLetterIndex(words[newWordIndex].length);
+                        setCurrentLetterIndex(words[newWordIndex].length - 1);
                         return newWordIndex;
                     });
                 }
@@ -76,6 +78,7 @@ const Words = ({ noOfWords }: WordsType) => {
         }
     }
     //-------------------------------------------------------------------------------------------------------//
+console.log(currentLetterIndex);
 
     //-------------------------------------------------------------------------------------------------------//
     document.addEventListener("keyup", () => {
