@@ -5,9 +5,11 @@ import { v4 as uuidv4 } from "uuid";
 
 interface WordsType {
     noOfWords: number;
+    setTimerStart: React.Dispatch<React.SetStateAction<boolean>>;
+    timer: number;
 }
 
-const Words = ({ noOfWords }: WordsType) => {
+const Words = ({ noOfWords, setTimerStart, timer }: WordsType) => {
     const [words, setWords] = useState<string[]>([]);
     const wordsDivRef = useRef<HTMLDivElement>(null);
     const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
@@ -19,6 +21,7 @@ const Words = ({ noOfWords }: WordsType) => {
     }>({ x: 72, y: 328 });
     const [wordsRemoved, setWordsRemoved] = useState<number>(0);
     const [wordsInFirstLine, setWordsnFirstLine] = useState<number>(0);
+    const [totalLetterTyped, setTotalLetterTyped] = useState<number>(0);
     //-------------------------------------------------------------------------------------------------------//
     //What is difference between mount and re-render?
     /*
@@ -35,17 +38,21 @@ const Words = ({ noOfWords }: WordsType) => {
         setWords(wordsTemp);
 
         //This is clean up code on unmounting the Words component
-        return console.log("hi there");
+        //return console.log("hi there");
     }, [noOfWords]);
     //-------------------------------------------------------------------------------------------------------//
-
     //-------------------------------------------------------------------------------------------------------//
     function onKeyDownHandler(e: React.KeyboardEvent<HTMLDivElement>) {
+        if (timer === 0) return;
         if (e.key == " ") {
             setCurrentLetterIndex(0);
             setCurrentWordIndex((curr) => curr + 1);
             return;
         }
+
+        if (e.key.length !== 1 && e.key != "Backspace") return;
+
+        //if (!/^[\u0020-\u007E]$/.test(e.key)) return;
 
         if (e.key == "Shift") {
             return;
@@ -54,8 +61,7 @@ const Words = ({ noOfWords }: WordsType) => {
         if (e.key === "Backspace") {
             if (currentLetterIndex > 0) {
                 setCurrentLetterIndex((curr) => curr - 1);
-                console.log('i ma here');
-                
+                console.log("i ma here");
             } else {
                 if (currentWordIndex > 0) {
                     // setCurrentWordIndex(curr => curr - 1)
@@ -78,12 +84,15 @@ const Words = ({ noOfWords }: WordsType) => {
         }
     }
     //-------------------------------------------------------------------------------------------------------//
-console.log(currentLetterIndex);
 
     //-------------------------------------------------------------------------------------------------------//
-    document.addEventListener("keyup", () => {
-        wordsDivRef.current?.focus();
-    });
+
+    useEffect(() => {
+        document.addEventListener("keyup", () => {
+            setTimerStart(true);
+            wordsDivRef.current?.focus();
+        });
+    }, []);
     //-------------------------------------------------------------------------------------------------------//
 
     //-------------------------------------------------------------------------------------------------------//
@@ -108,14 +117,32 @@ console.log(currentLetterIndex);
         () => words.map((word) => ({ id: uuidv4(), word })),
         [words]
     );
+    //-------------------------------------------------------------------------------------------------------//
+    useEffect(() => {
+        //console.log(totalLetterTyped);
+        setTotalLetterTyped((curr) => curr + 1);
+    }, [currentLetterIndex, currentWordIndex]);
+    /*
+        cmd + <- | -> move to start and end of line
+        cmd + shift +<- | -> move to start and end of line and select
+        cmd + backspace to remove one line 
+        option + <- | -> move one word 
+        option + up or down arrow key to move the line up or down 
+        option + shift + <- | -> move one word and select
+        option + shift + down or up arrow key to duplicate the line up or down
+        option + backspace to remove one word 
+        cmd + x to delete one line and copy it to clipboard
+        option + right click to have double cursor for writing 
+    */
+    //-------------------------------------------------------------------------------------------------------//
 
     return (
-        <div className=" h-screen bg-bgColor">
+        <div className=" h-screen">
             <div
                 id="wordsDiv"
                 tabIndex={1}
                 ref={wordsDivRef}
-                onKeyDown={onKeyDownHandler}
+                onKeyDown={(e) => onKeyDownHandler(e)}
                 className="outline-none fixed h-42 mt-80"
             >
                 <div
@@ -151,9 +178,13 @@ console.log(currentLetterIndex);
                                             word={wordObj.word.trim()}
                                             wordIndex={index + wordsRemoved}
                                             currentWordIndex={currentWordIndex}
-                                            currentLetterIndex={currentLetterIndex}
+                                            currentLetterIndex={
+                                                currentLetterIndex
+                                            }
                                             typedLetter={typedLetter}
-                                            setCurrentLetterPos={setCurrentLetterPos}
+                                            setCurrentLetterPos={
+                                                setCurrentLetterPos
+                                            }
                                         />
                                     )
                             )}
