@@ -18,10 +18,9 @@ const Words = ({ noOfWords, setTimerStart, timer }: WordsType) => {
     const [currentLetterPos, setCurrentLetterPos] = useState<{
         x: number;
         y: number;
-    }>({ x: 72, y: 328 });
+    }>({ x: 72, y: 320 });
     const [wordsRemoved, setWordsRemoved] = useState<number>(0);
     const [wordsInFirstLine, setWordsnFirstLine] = useState<number>(0);
-    const [totalLetterTyped, setTotalLetterTyped] = useState<number>(0);
     //-------------------------------------------------------------------------------------------------------//
     //What is difference between mount and re-render?
     /*
@@ -100,12 +99,12 @@ const Words = ({ noOfWords, setTimerStart, timer }: WordsType) => {
     useEffect(() => {
         const { x, y } = currentLetterPos;
 
-        if (x === 72 && y === 384) {
+        if (x === 72 && y === 376) {
             setWordsnFirstLine(currentWordIndex);
             return;
         }
 
-        if (x === 72 && y === 440) {
+        if (x === 72 && y === 432) {
             setWordsRemoved(wordsInFirstLine);
             setCurrentLetterPos((curr) => ({ x: curr.x, y: curr.y - 56 }));
         }
@@ -118,10 +117,6 @@ const Words = ({ noOfWords, setTimerStart, timer }: WordsType) => {
         [words]
     );
     //-------------------------------------------------------------------------------------------------------//
-    useEffect(() => {
-        //console.log(totalLetterTyped);
-        setTotalLetterTyped((curr) => curr + 1);
-    }, [currentLetterIndex, currentWordIndex]);
     /*
         cmd + <- | -> move to start and end of line
         cmd + shift +<- | -> move to start and end of line and select
@@ -134,6 +129,12 @@ const Words = ({ noOfWords, setTimerStart, timer }: WordsType) => {
         cmd + x to delete one line and copy it to clipboard
         option + right click to have double cursor for writing 
     */
+
+
+    useEffect(()=> {
+        //console.log(currentWordIndex);
+        
+    },[currentWordIndex])
     //-------------------------------------------------------------------------------------------------------//
 
     return (
@@ -175,7 +176,7 @@ const Words = ({ noOfWords, setTimerStart, timer }: WordsType) => {
                                     wordObj.word && (
                                         <Word
                                             key={wordObj.id}
-                                            word={wordObj.word.trim()}
+                                            word={wordObj.word}
                                             wordIndex={index + wordsRemoved}
                                             currentWordIndex={currentWordIndex}
                                             currentLetterIndex={

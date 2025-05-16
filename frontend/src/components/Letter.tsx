@@ -23,6 +23,7 @@ const Letter = ({
 }: LetterType) => {
     const [letterColor, setletterColor] = useState<string>("text-txtColor");
     const letterRef = useRef<HTMLDivElement>(null);
+    const [isTypedLetter, setIsTypedLetter] = useState<{isTyped: boolean, isCorrect: boolean | undefined}>({isTyped: false, isCorrect: undefined})
     
     useEffect(() => {
         if (typedLetter === "Backspace") {
@@ -43,6 +44,7 @@ const Letter = ({
                 const x = letterRef.current?.getBoundingClientRect().x;
                 const y = letterRef.current?.getBoundingClientRect().y;
                 setCurrentLetterPos({ x: x, y: y });
+                setIsTypedLetter({isTyped : false, isCorrect: undefined});
             }
             return;
         }
@@ -55,8 +57,10 @@ const Letter = ({
 
             if (typedLetter !== letter) {
                 setletterColor("text-wrongTxt");
+                setIsTypedLetter({isTyped : true, isCorrect: false});
             } else {
                 setletterColor("text-correctTxt");
+                setIsTypedLetter({isTyped : true, isCorrect: true});
             }
         }
         if (
@@ -93,7 +97,7 @@ const Letter = ({
 
     return (
         <div
-            className={`${letterColor} w-5.5 roboto-mono-400`}
+            className={`${letterColor} w-5.5 h-14 roboto-mono-400`}
             ref={letterRef}
         >
             {letter && letter}

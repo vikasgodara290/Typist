@@ -4,7 +4,7 @@ import Timer from "./components/Timer";
 import { useEffect, useRef, useState } from "react";
 
 function App() {
-    const [timer, setTimer] = useState<number>(15);
+    const [timer, setTimer] = useState<number>(150);
     const timerIntervalRef = useRef<number>(timer);
     const [timerStart, setTimerStart] = useState<boolean>(false);
 

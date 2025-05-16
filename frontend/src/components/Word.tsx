@@ -25,7 +25,7 @@ const Word = ({
     );
 
     return (
-        <div key={wordIndex} className="mr-5.5 h-14 flex items-center">
+        <div key={wordIndex} className="h-14 flex items-center">
             {word &&
                 letterWithIds
                     .map((letter, index) => (
