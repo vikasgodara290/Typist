@@ -7,9 +7,11 @@ interface WordsType {
     noOfWords: number;
     setTimerStart: React.Dispatch<React.SetStateAction<boolean>>;
     timer: number;
+    setTypingSpeed : React.Dispatch<React.SetStateAction<number>>;
+    initialTimer: number;
 }
 
-const Words = ({ noOfWords, setTimerStart, timer }: WordsType) => {
+const Words = ({ noOfWords, setTimerStart, timer, setTypingSpeed, initialTimer}: WordsType) => {
     const [words, setWords] = useState<string[]>([]);
     const wordsDivRef = useRef<HTMLDivElement>(null);
     const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
@@ -22,6 +24,7 @@ const Words = ({ noOfWords, setTimerStart, timer }: WordsType) => {
     const [wordsRemoved, setWordsRemoved] = useState<number>(0);
     const [wordsInFirstLine, setWordsnFirstLine] = useState<number>(0);
     const [isWordCorrectP, setIsWordCorrectP] = useState<boolean | undefined>();
+    const [totalCorrectLetterTyped, setTotalCorrectLetterTyped] = useState<number>(0);
     //-------------------------------------------------------------------------------------------------------//
     //What is difference between mount and re-render?
     /*
@@ -159,12 +162,30 @@ const Words = ({ noOfWords, setTimerStart, timer }: WordsType) => {
     */
 
     useEffect(() => {
-        //console.log(currentWordIndex);
+        //console.log(totalCorrectLetterTyped);
+        console.log(initialTimer - timer);
+        console.log((totalCorrectLetterTyped * (60 / (initialTimer - timer)))/5);
+        
     }, [currentWordIndex]);
 
-    const onIsWordCorrectChange = (value : boolean) => {
+    const onIsWordCorrectChange = (value: boolean) => {
         setIsWordCorrectP(value);
-    }
+    };
+    //-------------------------------------------------------------------------------------------------------//
+    //-------------------------------------------------------------------------------------------------------//
+    useEffect(()=> {
+        if (words.length > 0) {
+            if (currentLetterIndex === words[currentWordIndex].length - 1) {
+                console.log(isWordCorrectP);
+                if(isWordCorrectP){
+                    //console.log(words[currentWordIndex].length);
+                    setTotalCorrectLetterTyped(curr => curr + words[currentWordIndex].length);
+                    //console.log(totalCorrectLetterTyped);              
+                }
+            }
+        }
+    },[currentLetterIndex])
+
     //-------------------------------------------------------------------------------------------------------//
 
     return (
@@ -216,7 +237,9 @@ const Words = ({ noOfWords, setTimerStart, timer }: WordsType) => {
                                             setCurrentLetterPos={
                                                 setCurrentLetterPos
                                             }
-                                            onIsWordCorrectChange={onIsWordCorrectChange}
+                                            onIsWordCorrectChange={
+                                                onIsWordCorrectChange
+                                            }
                                         />
                                     )
                             )}

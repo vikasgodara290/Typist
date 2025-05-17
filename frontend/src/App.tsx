@@ -4,9 +4,11 @@ import Timer from "./components/Timer";
 import { useEffect, useRef, useState } from "react";
 
 function App() {
-    const [timer, setTimer] = useState<number>(150);
+    const [timer, setTimer] = useState<number>(15);
     const timerIntervalRef = useRef<number>(timer);
+    const initialTimer = useRef<number>(15);
     const [timerStart, setTimerStart] = useState<boolean>(false);
+    const [typingSpeed, setTypingSpeed] = useState<number>(0);
 
     useEffect(() => {
         if (timerStart) {
@@ -31,7 +33,7 @@ function App() {
     return (
         <div className="bg-bgColor">
             <Timer timer={timer} />
-            <Words noOfWords={50} setTimerStart={setTimerStart} timer={timer} />
+            <Words noOfWords={50} setTimerStart={setTimerStart} timer={timer} setTypingSpeed={setTypingSpeed} initialTimer ={initialTimer.current}/>
         </div>
     );
 }
