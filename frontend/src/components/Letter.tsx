@@ -9,6 +9,7 @@ interface LetterType {
     typedLetter: string;
     setCurrentLetterPos: any;
     wordLength: number;
+    setIsWordCorrectC : React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
 const Letter = ({
@@ -20,6 +21,7 @@ const Letter = ({
     typedLetter,
     setCurrentLetterPos,
     wordLength,
+    setIsWordCorrectC,
 }: LetterType) => {
     const [letterColor, setletterColor] = useState<string>("text-txtColor");
     const letterRef = useRef<HTMLDivElement>(null);
@@ -45,6 +47,10 @@ const Letter = ({
                 const y = letterRef.current?.getBoundingClientRect().y;
                 setCurrentLetterPos({ x: x, y: y });
                 setIsTypedLetter({isTyped : false, isCorrect: undefined});
+                if(currentLetterIndex != wordLength - 1){
+                    setIsWordCorrectC(undefined);
+                }
+                
             }
             return;
         }
@@ -57,10 +63,19 @@ const Letter = ({
 
             if (typedLetter !== letter) {
                 setletterColor("text-wrongTxt");
-                setIsTypedLetter({isTyped : true, isCorrect: false});
+                setIsTypedLetter({isTyped : true, isCorrect: false});             
+                setIsWordCorrectC(false);
             } else {
                 setletterColor("text-correctTxt");
                 setIsTypedLetter({isTyped : true, isCorrect: true});
+                setIsWordCorrectC(curr => {
+                    if(curr === true || curr === undefined){
+                        return true;
+                    }
+                    else{
+                        return false;
+                    } 
+                }); 
             }
         }
         if (

@@ -21,6 +21,7 @@ const Words = ({ noOfWords, setTimerStart, timer }: WordsType) => {
     }>({ x: 72, y: 320 });
     const [wordsRemoved, setWordsRemoved] = useState<number>(0);
     const [wordsInFirstLine, setWordsnFirstLine] = useState<number>(0);
+    const [isWordCorrectP, setIsWordCorrectP] = useState<boolean | undefined>();
     //-------------------------------------------------------------------------------------------------------//
     //What is difference between mount and re-render?
     /*
@@ -43,8 +44,27 @@ const Words = ({ noOfWords, setTimerStart, timer }: WordsType) => {
     //-------------------------------------------------------------------------------------------------------//
     function onKeyDownHandler(e: React.KeyboardEvent<HTMLDivElement>) {
         if (timer === 0) return;
+
+        if (
+            currentLetterIndex === words[currentWordIndex].length - 1 &&
+            e.key != "Backspace"
+        ) {
+            if (e.key == " ") {
+                setCurrentLetterIndex(0);
+                setCurrentWordIndex((curr) => curr + 1);
+                return;
+            } else {
+                return;
+            }
+        }
+
         if (e.key == " ") {
-            setCurrentLetterIndex(0);
+            setCurrentLetterIndex((curr) => {
+                if (curr !== words[currentWordIndex].length - 1) {
+                    setIsWordCorrectP(false);
+                }
+                return 0;
+            });
             setCurrentWordIndex((curr) => curr + 1);
             return;
         }
@@ -58,9 +78,17 @@ const Words = ({ noOfWords, setTimerStart, timer }: WordsType) => {
         }
 
         if (e.key === "Backspace") {
+            console.log(currentLetterIndex, currentWordIndex, isWordCorrectP);
+
+            if (
+                currentLetterIndex === words[currentWordIndex].length - 1 &&
+                isWordCorrectP
+            ) {
+                return;
+            }
+
             if (currentLetterIndex > 0) {
                 setCurrentLetterIndex((curr) => curr - 1);
-                console.log("i ma here");
             } else {
                 if (currentWordIndex > 0) {
                     // setCurrentWordIndex(curr => curr - 1)
@@ -130,11 +158,13 @@ const Words = ({ noOfWords, setTimerStart, timer }: WordsType) => {
         option + right click to have double cursor for writing 
     */
 
-
-    useEffect(()=> {
+    useEffect(() => {
         //console.log(currentWordIndex);
-        
-    },[currentWordIndex])
+    }, [currentWordIndex]);
+
+    const onIsWordCorrectChange = (value : boolean) => {
+        setIsWordCorrectP(value);
+    }
     //-------------------------------------------------------------------------------------------------------//
 
     return (
@@ -186,6 +216,7 @@ const Words = ({ noOfWords, setTimerStart, timer }: WordsType) => {
                                             setCurrentLetterPos={
                                                 setCurrentLetterPos
                                             }
+                                            onIsWordCorrectChange={onIsWordCorrectChange}
                                         />
                                     )
                             )}
