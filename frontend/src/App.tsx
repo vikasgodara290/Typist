@@ -2,6 +2,7 @@ import Words from "./components/Words";
 import "./app.css";
 import Timer from "./components/Timer";
 import { useEffect, useRef, useState } from "react";
+import SpeedGraph from "./components/SpeedGraph";
 
 function App() {
     const [timer, setTimer] = useState<number>(15);
@@ -32,8 +33,10 @@ function App() {
     
     return (
         <div className="bg-bgColor">
-            <Timer timer={timer} />
-            <Words noOfWords={50} setTimerStart={setTimerStart} timer={timer} setTypingSpeed={setTypingSpeed} initialTimer ={initialTimer.current}/>
+            {/* <Timer timer={timer} />
+            <Words noOfWords={50} setTimerStart={setTimerStart} timer={timer} setTypingSpeed={setTypingSpeed} initialTimer ={initialTimer.current}/> */}
+
+            <SpeedGraph/>
         </div>
     );
 }
