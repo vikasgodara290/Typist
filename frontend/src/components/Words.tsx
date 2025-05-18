@@ -2,16 +2,25 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import english1k from "../assets/english_1k.json";
 import Word from "./Word";
 import { v4 as uuidv4 } from "uuid";
+import SpeedDataBySecondType from "../types";
 
 interface WordsType {
     noOfWords: number;
     setTimerStart: React.Dispatch<React.SetStateAction<boolean>>;
     timer: number;
-    setTypingSpeed : React.Dispatch<React.SetStateAction<number>>;
-    initialTimer: number;
+    setTotalCorrectLetterTyped: React.Dispatch<React.SetStateAction<number>>;
+    setSpeedDataBySecond: React.Dispatch<
+        React.SetStateAction<SpeedDataBySecondType[]>
+    >;
 }
 
-const Words = ({ noOfWords, setTimerStart, timer, setTypingSpeed, initialTimer}: WordsType) => {
+const Words = ({
+    noOfWords,
+    setTimerStart,
+    timer,
+    setTotalCorrectLetterTyped,
+    setSpeedDataBySecond,
+}: WordsType) => {
     const [words, setWords] = useState<string[]>([]);
     const wordsDivRef = useRef<HTMLDivElement>(null);
     const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
@@ -24,14 +33,9 @@ const Words = ({ noOfWords, setTimerStart, timer, setTypingSpeed, initialTimer}:
     const [wordsRemoved, setWordsRemoved] = useState<number>(0);
     const [wordsInFirstLine, setWordsnFirstLine] = useState<number>(0);
     const [isWordCorrectP, setIsWordCorrectP] = useState<boolean | undefined>();
-    const [totalCorrectLetterTyped, setTotalCorrectLetterTyped] = useState<number>(0);
+
     //-------------------------------------------------------------------------------------------------------//
-    //What is difference between mount and re-render?
-    /*
-        Mount : Very first time created and inserted into DOM.
-            -> On Reload (initial Render), Route change 
-        Re-Render : Component is already inserted, there is change in state init that's why it re-render with new state.
-    */
+    // set a array of words based on no of words required
     useEffect(() => {
         let wordsTemp: string[] = [];
         for (let i = 0; i < noOfWords; i++) {
@@ -39,28 +43,35 @@ const Words = ({ noOfWords, setTimerStart, timer, setTypingSpeed, initialTimer}:
             wordsTemp.push(english1k.words[randomIndex]);
         }
         setWords(wordsTemp);
-
-        //This is clean up code on unmounting the Words component
-        //return console.log("hi there");
     }, [noOfWords]);
     //-------------------------------------------------------------------------------------------------------//
+
     //-------------------------------------------------------------------------------------------------------//
+    // it capture all the keys pressed by user
     function onKeyDownHandler(e: React.KeyboardEvent<HTMLDivElement>) {
+        //if timer hits 0. it disable the key down event for user to stop writing.
         if (timer === 0) return;
 
+        //if user is at last char of word(space always) and it types any key other than backspace.
         if (
             currentLetterIndex === words[currentWordIndex].length - 1 &&
             e.key != "Backspace"
         ) {
+            //if user types space which is correct moves to next word and it counts as a correctly typed letter if word is correctly typed.
+            //else it diable user to move forward to next word until it presses space.
             if (e.key == " ") {
                 setCurrentLetterIndex(0);
                 setCurrentWordIndex((curr) => curr + 1);
+                if (isWordCorrectP) {
+                    setTotalCorrectLetterTyped((curr) => curr + 1);
+                }
                 return;
             } else {
                 return;
             }
         }
 
+        //if user press space in between a word, it moves to next word and also it set the word as incorrectly typed.
         if (e.key == " ") {
             setCurrentLetterIndex((curr) => {
                 if (curr !== words[currentWordIndex].length - 1) {
@@ -72,43 +83,43 @@ const Words = ({ noOfWords, setTimerStart, timer, setTypingSpeed, initialTimer}:
             return;
         }
 
+        //it ignores the non related keys like alt, tab, f1-f9, esc etc.
         if (e.key.length !== 1 && e.key != "Backspace") return;
 
-        //if (!/^[\u0020-\u007E]$/.test(e.key)) return;
-
-        if (e.key == "Shift") {
-            return;
-        }
-
         if (e.key === "Backspace") {
-            console.log(currentLetterIndex, currentWordIndex, isWordCorrectP);
-
+            
+            //if user is at last letter of word (space always) and hit backspace user should not be able to go back to word
             if (
                 currentLetterIndex === words[currentWordIndex].length - 1 &&
                 isWordCorrectP
-            ) {
+            ){
                 return;
             }
+            
+            //if user is not on first word and is not 0 index of another word it will remove space and -1 the correct letter count
+            if (currentLetterIndex === 0 && currentWordIndex != 0) {
+                setTotalCorrectLetterTyped((curr) => curr - 1);
+                setCurrentWordIndex((curr) => {
+                    const newWordIndex = curr - 1;
+                    setCurrentLetterIndex(words[newWordIndex].length - 1);
+                    return newWordIndex;
+                });
+            }
 
+            //if user in between a word and hit backspace go to prev letter
             if (currentLetterIndex > 0) {
                 setCurrentLetterIndex((curr) => curr - 1);
-            } else {
-                if (currentWordIndex > 0) {
-                    // setCurrentWordIndex(curr => curr - 1)
-                    // setCurrentLetterIndex(words[currentWordIndex - 1].length - 1 )
-                    setCurrentWordIndex((curr) => {
-                        const newWordIndex = curr - 1;
-                        setCurrentLetterIndex(words[newWordIndex].length - 1);
-                        return newWordIndex;
-                    });
-                }
             }
+
+            //set the typed letter (Backspace)
             setTypedLetter(e.key);
             return;
         }
 
+        //if it is a normal char and passes all he above conditions
         setTypedLetter(e.key);
-
+        
+        //move to next letter
         if (words[currentWordIndex].length > currentLetterIndex) {
             setCurrentLetterIndex((curr) => curr + 1);
         }
@@ -116,7 +127,7 @@ const Words = ({ noOfWords, setTimerStart, timer, setTypingSpeed, initialTimer}:
     //-------------------------------------------------------------------------------------------------------//
 
     //-------------------------------------------------------------------------------------------------------//
-
+    //when ever user hit any key it set the timer to start and focus on the words div
     useEffect(() => {
         document.addEventListener("keyup", () => {
             setTimerStart(true);
@@ -126,7 +137,7 @@ const Words = ({ noOfWords, setTimerStart, timer, setTypingSpeed, initialTimer}:
     //-------------------------------------------------------------------------------------------------------//
 
     //-------------------------------------------------------------------------------------------------------//
-    /*Detect that carrot is on end of 2nd line and user pressed space*/
+    //Detect that carrot is on end of 2nd line and user pressed space
     useEffect(() => {
         const { x, y } = currentLetterPos;
 
@@ -140,52 +151,21 @@ const Words = ({ noOfWords, setTimerStart, timer, setTypingSpeed, initialTimer}:
             setCurrentLetterPos((curr) => ({ x: curr.x, y: curr.y - 56 }));
         }
     }, [currentLetterPos]);
-
     //-------------------------------------------------------------------------------------------------------//
 
+    //-------------------------------------------------------------------------------------------------------//
+    // setting up UUID to words
     const wordsWithIds = useMemo(
         () => words.map((word) => ({ id: uuidv4(), word })),
         [words]
     );
     //-------------------------------------------------------------------------------------------------------//
-    /*
-        cmd + <- | -> move to start and end of line
-        cmd + shift +<- | -> move to start and end of line and select
-        cmd + backspace to remove one line 
-        option + <- | -> move one word 
-        option + up or down arrow key to move the line up or down 
-        option + shift + <- | -> move one word and select
-        option + shift + down or up arrow key to duplicate the line up or down
-        option + backspace to remove one word 
-        cmd + x to delete one line and copy it to clipboard
-        option + right click to have double cursor for writing 
-    */
 
-    useEffect(() => {
-        //console.log(totalCorrectLetterTyped);
-        console.log(initialTimer - timer);
-        console.log((totalCorrectLetterTyped * (60 / (initialTimer - timer)))/5);
-        
-    }, [currentWordIndex]);
-
+    //-------------------------------------------------------------------------------------------------------//
+    // set the word is correct or wrong by word comp
     const onIsWordCorrectChange = (value: boolean) => {
         setIsWordCorrectP(value);
     };
-    //-------------------------------------------------------------------------------------------------------//
-    //-------------------------------------------------------------------------------------------------------//
-    useEffect(()=> {
-        if (words.length > 0) {
-            if (currentLetterIndex === words[currentWordIndex].length - 1) {
-                console.log(isWordCorrectP);
-                if(isWordCorrectP){
-                    //console.log(words[currentWordIndex].length);
-                    setTotalCorrectLetterTyped(curr => curr + words[currentWordIndex].length);
-                    //console.log(totalCorrectLetterTyped);              
-                }
-            }
-        }
-    },[currentLetterIndex])
-
     //-------------------------------------------------------------------------------------------------------//
 
     return (
@@ -239,6 +219,9 @@ const Words = ({ noOfWords, setTimerStart, timer, setTypingSpeed, initialTimer}:
                                             }
                                             onIsWordCorrectChange={
                                                 onIsWordCorrectChange
+                                            }
+                                            setTotalCorrectLetterTyped={
+                                                setTotalCorrectLetterTyped
                                             }
                                         />
                                     )

@@ -10,6 +10,7 @@ interface WordType {
     typedLetter: string;
     setCurrentLetterPos: any;
     onIsWordCorrectChange : (value : boolean) => void;
+    setTotalCorrectLetterTyped: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const Word = ({
@@ -19,17 +20,26 @@ const Word = ({
     currentLetterIndex,
     typedLetter,
     setCurrentLetterPos,
-    onIsWordCorrectChange
+    onIsWordCorrectChange,
+    setTotalCorrectLetterTyped
 }: WordType) => {
     const [isWordCorrectC, setIsWordCorrectC] = useState<boolean | undefined>(undefined);
     const letterWithIds = useMemo(
         () => word.split("").map((letter) => ({ id: uuidv4(), letter })),
         [word]
     );
-
+    
+    //it passes the isWordCorrect to it's parent (words comp)
     useEffect(()=> {
         if(isWordCorrectC !== undefined){
             onIsWordCorrectChange(isWordCorrectC);
+        }
+        //it is not working trying to remove the letters typed in wrong word
+        if(isWordCorrectC === false){
+            setTotalCorrectLetterTyped(curr => curr - currentLetterIndex)
+        }
+        if(isWordCorrectC === true){
+            setTotalCorrectLetterTyped(curr => curr + currentLetterIndex)
         }
     },[isWordCorrectC])
 
@@ -48,6 +58,7 @@ const Word = ({
                         setCurrentLetterPos={setCurrentLetterPos}
                         wordLength={word.length}
                         setIsWordCorrectC={setIsWordCorrectC}
+                        setTotalCorrectLetterTyped={setTotalCorrectLetterTyped}
                     />
                 ))}
         </div>

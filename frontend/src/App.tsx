@@ -1,8 +1,12 @@
-import Words from "./components/Words";
-import "./app.css";
-import Timer from "./components/Timer";
 import { useEffect, useRef, useState } from "react";
+
+import Words from "./components/Words";
+import Timer from "./components/Timer";
 import SpeedGraph from "./components/SpeedGraph";
+
+import SpeedDataBySecondType from "./types";
+
+import "./app.css";
 
 function App() {
     const [timer, setTimer] = useState<number>(15);
@@ -10,7 +14,11 @@ function App() {
     const initialTimer = useRef<number>(15);
     const [timerStart, setTimerStart] = useState<boolean>(false);
     const [typingSpeed, setTypingSpeed] = useState<number>(0);
+    const [totalCorrectLetterTyped, setTotalCorrectLetterTyped] = useState<number>(0);
+    const [speedDataBySecond, setSpeedDataBySecond] = useState<SpeedDataBySecondType[]>([]);
 
+    //-----------------------------------------------------------------------------//
+    //it starts the timer when user hit a key. it sets the setTimerStart in words comp.
     useEffect(() => {
         if (timerStart) {
             timerIntervalRef.current = setInterval(() => {
@@ -24,19 +32,38 @@ function App() {
             }
         };
     }, [timerStart]);
+    //-----------------------------------------------------------------------------//
 
-    useEffect(() => {
-        if (timer === 0 && timerIntervalRef.current) {
-            clearInterval(timerIntervalRef.current);
-        }
-    }, [timer]);
-    
+    //-----------------------------------------------------------------------------//
+    //it clears the setInterval on -1 
+    if (timer === -1 && timerIntervalRef.current) {
+        clearInterval(timerIntervalRef.current);
+    }
+    //calculate the typing speed on timer 0
+    if (timer === 0) {
+        setTypingSpeed(
+            (totalCorrectLetterTyped * (60 / initialTimer.current)) / 5
+        );
+        setTimer(-1);
+    }
+    //-----------------------------------------------------------------------------//
+
     return (
         <div className="bg-bgColor">
-            {/* <Timer timer={timer} />
-            <Words noOfWords={50} setTimerStart={setTimerStart} timer={timer} setTypingSpeed={setTypingSpeed} initialTimer ={initialTimer.current}/> */}
-
-            <SpeedGraph/>
+            {timer === -1 ? (
+                <SpeedGraph typingSpeed={typingSpeed}/>
+            ) : (
+                <>
+                    <Timer timer={timer} />
+                    <Words
+                        noOfWords={50}
+                        setTimerStart={setTimerStart}
+                        timer={timer}
+                        setTotalCorrectLetterTyped={setTotalCorrectLetterTyped}
+                        setSpeedDataBySecond={setSpeedDataBySecond}
+                    />
+                </>
+            )}
         </div>
     );
 }

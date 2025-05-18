@@ -10,6 +10,7 @@ interface LetterType {
     setCurrentLetterPos: any;
     wordLength: number;
     setIsWordCorrectC : React.Dispatch<React.SetStateAction<boolean | undefined>>;
+    setTotalCorrectLetterTyped: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const Letter = ({
@@ -22,52 +23,50 @@ const Letter = ({
     setCurrentLetterPos,
     wordLength,
     setIsWordCorrectC,
+    setTotalCorrectLetterTyped
 }: LetterType) => {
     const [letterColor, setletterColor] = useState<string>("text-txtColor");
     const letterRef = useRef<HTMLDivElement>(null);
-    //const [isTypedLetter, setIsTypedLetter] = useState<{isTyped: boolean, isCorrect: boolean | undefined}>({isTyped: false, isCorrect: undefined})
     
     useEffect(() => {
+
+        //user typied backspace
         if (typedLetter === "Backspace") {
-            //console.log(typedLetter, currentLetterIndex, letter);
-            if (
-                letterIndex === currentLetterIndex - 1 &&
-                wordIndex === currentWordIndex
-            ) {
-                //console.log(letter);
-                //setCarrot("border-r-3 border-amber-500")
-            }
+
+            //get the the letter which need to be removed
             if (
                 letterIndex === currentLetterIndex &&
                 wordIndex === currentWordIndex
             ) {
+                //set the default color
                 setletterColor("text-txtColor");
-                //setCarrot("border-r-3 border-white")
+                //set the caret to current letter's left
                 const x = letterRef.current?.getBoundingClientRect().x;
                 const y = letterRef.current?.getBoundingClientRect().y;
                 setCurrentLetterPos({ x: x, y: y });
-                //setIsTypedLetter({isTyped : false, isCorrect: undefined});
+                //make the word isCorrect undefined
                 if(currentLetterIndex != wordLength - 1){
                     setIsWordCorrectC(undefined);
-                }
-                
+                } 
             }
             return;
         }
+
+        //user typed a letter
         if (
             typedLetter !== "" &&
             letterIndex === currentLetterIndex - 1 &&
             wordIndex === currentWordIndex
         ) {
-            //setCarrot("border-r-3 border-amber-500")
-
+            //if check the typed letter is correct or not and set color accordingly
             if (typedLetter !== letter) {
-                setletterColor("text-wrongTxt");
-                //setIsTypedLetter({isTyped : true, isCorrect: false});             
+                setletterColor("text-wrongTxt"); 
+                //set the entire word to wrong     
                 setIsWordCorrectC(false);
             } else {
                 setletterColor("text-correctTxt");
-                //setIsTypedLetter({isTyped : true, isCorrect: true});
+                setTotalCorrectLetterTyped(curr => curr + 1);
+                //set the entire word to right if it does not have any wrong letter     
                 setIsWordCorrectC(curr => {
                     if(curr === true || curr === undefined){
                         return true;
@@ -78,34 +77,16 @@ const Letter = ({
                 }); 
             }
         }
+
+        //it moves the caret to next letter
         if (
             typedLetter !== "" &&
             letterIndex === currentLetterIndex &&
             wordIndex === currentWordIndex
         ) {
-            //setCarrot("border-r-3 border-amber-500")
-            //letterRef.current?.focus()
-            // console.log(typedLetter, letter, letterIndex , currentLetterIndex, wordIndex , currentWordIndex);
-            // console.log(letterRef.current?.getBoundingClientRect());
             const x = letterRef.current?.getBoundingClientRect().x;
             const y = letterRef.current?.getBoundingClientRect().y;
             setCurrentLetterPos({ x: x, y: y });
-        }
-        if (
-            typedLetter !== "" &&
-            letterIndex === currentLetterIndex - 1 &&
-            currentLetterIndex === wordLength &&
-            wordIndex === currentWordIndex
-        ) {
-            //setCarrot("border-r-3 border-amber-500")
-            //letterRef.current?.focus()
-            // console.log(typedLetter, letter, letterIndex , currentLetterIndex, wordIndex , currentWordIndex, wordLength);
-            // console.log(letterRef.current?.getBoundingClientRect());
-            setCurrentLetterPos((curr: { x: number; y: number }) => {
-                return { x: curr.x + 22, y: curr.y };
-            });
-        } else {
-            //setCarrot("border-r-3 border-white")
         }
         
     }, [currentLetterIndex, currentWordIndex, typedLetter]);

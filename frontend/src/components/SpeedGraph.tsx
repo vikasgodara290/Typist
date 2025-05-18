@@ -8,43 +8,47 @@ import {
 } from "recharts";
 // import "./styles.css";
 
+interface SpeedGraphProps{
+    typingSpeed: number;
+}
+
 const data = [
     {
-        name: "1",
+        name: 1,
         wpm: 400,
     },
     {
-        name: "2",
+        name: 2,
         wpm: 300,
     },
     {
-        name: "3",
+        name: 3,
         wpm: 200,
     },
     {
-        name: "4",
+        name: 4,
         wpm: 278,
     },
     {
-        name: "5",
+        name: 5,
         wpm: 180,
     },
     {
-        name: "6",
+        name: 6,
         wpm: 200,
     },
     {
-        name: "7",
+        name: 7,
         wpm: 340,
     },
 ];
 
-const SpeedGraph = () => {
+const SpeedGraph = ({typingSpeed} : SpeedGraphProps) => {
     return (
         <div className="h-screen w-screen bg-bgColor flex pt-[250px] px-28">
             <div className="w-32 h-36 flex flex-wrap ml-auto">
                 <div className="mx-auto text-[32px] text-txtColor">wpm</div>
-                <div className="mx-auto text-[64px] text-amber-500">75</div>
+                <div className="mx-auto text-[64px] text-amber-500">{Math.round(typingSpeed)}</div>
             </div>
             <ResponsiveContainer
                 width="85%"
