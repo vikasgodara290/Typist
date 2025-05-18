@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Letter from "./Letter";
 import { v4 as uuidv4 } from "uuid";
+import { LetterTrackingType } from "../types";
 
 interface WordType {
     word: string;
@@ -10,7 +11,7 @@ interface WordType {
     typedLetter: string;
     setCurrentLetterPos: any;
     onIsWordCorrectChange : (value : boolean) => void;
-    setTotalCorrectLetterTyped: React.Dispatch<React.SetStateAction<number>>;
+    setLetterTracker: React.Dispatch<React.SetStateAction<LetterTrackingType[]>>;
 }
 
 const Word = ({
@@ -21,7 +22,7 @@ const Word = ({
     typedLetter,
     setCurrentLetterPos,
     onIsWordCorrectChange,
-    setTotalCorrectLetterTyped
+    setLetterTracker
 }: WordType) => {
     const [isWordCorrectC, setIsWordCorrectC] = useState<boolean | undefined>(undefined);
     const letterWithIds = useMemo(
@@ -33,13 +34,6 @@ const Word = ({
     useEffect(()=> {
         if(isWordCorrectC !== undefined){
             onIsWordCorrectChange(isWordCorrectC);
-        }
-        //it is not working trying to remove the letters typed in wrong word
-        if(isWordCorrectC === false){
-            setTotalCorrectLetterTyped(curr => curr - currentLetterIndex)
-        }
-        if(isWordCorrectC === true){
-            setTotalCorrectLetterTyped(curr => curr + currentLetterIndex)
         }
     },[isWordCorrectC])
 
@@ -58,7 +52,7 @@ const Word = ({
                         setCurrentLetterPos={setCurrentLetterPos}
                         wordLength={word.length}
                         setIsWordCorrectC={setIsWordCorrectC}
-                        setTotalCorrectLetterTyped={setTotalCorrectLetterTyped}
+                        setLetterTracker={setLetterTracker}
                     />
                 ))}
         </div>

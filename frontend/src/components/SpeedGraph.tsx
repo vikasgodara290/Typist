@@ -6,44 +6,15 @@ import {
     Area,
     AreaChart,
 } from "recharts";
+import { SpeedDataBySecondType } from "../types";
 // import "./styles.css";
 
 interface SpeedGraphProps{
     typingSpeed: number;
+    speedDataBySecond: SpeedDataBySecondType[];
 }
 
-const data = [
-    {
-        name: 1,
-        wpm: 400,
-    },
-    {
-        name: 2,
-        wpm: 300,
-    },
-    {
-        name: 3,
-        wpm: 200,
-    },
-    {
-        name: 4,
-        wpm: 278,
-    },
-    {
-        name: 5,
-        wpm: 180,
-    },
-    {
-        name: 6,
-        wpm: 200,
-    },
-    {
-        name: 7,
-        wpm: 340,
-    },
-];
-
-const SpeedGraph = ({typingSpeed} : SpeedGraphProps) => {
+const SpeedGraph = ({typingSpeed, speedDataBySecond} : SpeedGraphProps) => {
     return (
         <div className="h-screen w-screen bg-bgColor flex pt-[250px] px-28">
             <div className="w-32 h-36 flex flex-wrap ml-auto">
@@ -56,7 +27,7 @@ const SpeedGraph = ({typingSpeed} : SpeedGraphProps) => {
                 className={"flex mx-auto"}
             >
                 <AreaChart
-                    data={data}
+                    data={speedDataBySecond}
                     margin={{
                         top: 10,
                         right: 30,
@@ -65,7 +36,7 @@ const SpeedGraph = ({typingSpeed} : SpeedGraphProps) => {
                     }}
                 >
                     {/* <CartesianGrid strokeDasharray="3 3" /> */}
-                    <XAxis dataKey="name" padding={{ left: 0, right: 0 }} />
+                    <XAxis dataKey="second" padding={{ left: 0, right: 0 }} />
                     <YAxis />
                     <Tooltip />
 

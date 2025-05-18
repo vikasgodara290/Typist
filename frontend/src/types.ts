@@ -1,8 +1,14 @@
 
 
 interface SpeedDataBySecondType {
-    name: number,
+    second: number,
     wpm: number
 }
 
-export default SpeedDataBySecondType
+interface LetterTrackingType {
+    wordIndex : number,
+    letterIndex : number,
+    isCorrect : boolean | undefined
+}
+
+export type { SpeedDataBySecondType ,LetterTrackingType }

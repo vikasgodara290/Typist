@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { LetterTrackingType } from "../types";
 
 interface LetterType {
     letter: string;
@@ -9,8 +10,12 @@ interface LetterType {
     typedLetter: string;
     setCurrentLetterPos: any;
     wordLength: number;
-    setIsWordCorrectC : React.Dispatch<React.SetStateAction<boolean | undefined>>;
-    setTotalCorrectLetterTyped: React.Dispatch<React.SetStateAction<number>>;
+    setIsWordCorrectC: React.Dispatch<
+        React.SetStateAction<boolean | undefined>
+    >;
+    setLetterTracker: React.Dispatch<
+        React.SetStateAction<LetterTrackingType[]>
+    >;
 }
 
 const Letter = ({
@@ -23,16 +28,14 @@ const Letter = ({
     setCurrentLetterPos,
     wordLength,
     setIsWordCorrectC,
-    setTotalCorrectLetterTyped
+    setLetterTracker,
 }: LetterType) => {
     const [letterColor, setletterColor] = useState<string>("text-txtColor");
     const letterRef = useRef<HTMLDivElement>(null);
-    
-    useEffect(() => {
 
+    useEffect(() => {
         //user typied backspace
         if (typedLetter === "Backspace") {
-
             //get the the letter which need to be removed
             if (
                 letterIndex === currentLetterIndex &&
@@ -40,14 +43,21 @@ const Letter = ({
             ) {
                 //set the default color
                 setletterColor("text-txtColor");
+                setLetterTracker((curr) => {
+                    const updatedCurr = curr.filter((item) =>
+                        !(item.wordIndex === wordIndex &&
+                        item.letterIndex === letterIndex)
+                    );
+                    return updatedCurr;
+                });
                 //set the caret to current letter's left
                 const x = letterRef.current?.getBoundingClientRect().x;
                 const y = letterRef.current?.getBoundingClientRect().y;
                 setCurrentLetterPos({ x: x, y: y });
                 //make the word isCorrect undefined
-                if(currentLetterIndex != wordLength - 1){
+                if (currentLetterIndex != wordLength - 1) {
                     setIsWordCorrectC(undefined);
-                } 
+                }
             }
             return;
         }
@@ -60,21 +70,35 @@ const Letter = ({
         ) {
             //if check the typed letter is correct or not and set color accordingly
             if (typedLetter !== letter) {
-                setletterColor("text-wrongTxt"); 
-                //set the entire word to wrong     
+                setletterColor("text-wrongTxt");
+                //set the entire word to wrong
+                setLetterTracker((curr) => [
+                    ...curr,
+                    {
+                        wordIndex: wordIndex,
+                        letterIndex: letterIndex,
+                        isCorrect: false,
+                    },
+                ]);
                 setIsWordCorrectC(false);
             } else {
                 setletterColor("text-correctTxt");
-                setTotalCorrectLetterTyped(curr => curr + 1);
-                //set the entire word to right if it does not have any wrong letter     
-                setIsWordCorrectC(curr => {
-                    if(curr === true || curr === undefined){
+                setLetterTracker((curr) => [
+                    ...curr,
+                    {
+                        wordIndex: wordIndex,
+                        letterIndex: letterIndex,
+                        isCorrect: true,
+                    },
+                ]);
+                //set the entire word to right if it does not have any wrong letter
+                setIsWordCorrectC((curr) => {
+                    if (curr === true || curr === undefined) {
                         return true;
-                    }
-                    else{
+                    } else {
                         return false;
-                    } 
-                }); 
+                    }
+                });
             }
         }
 
@@ -88,7 +112,6 @@ const Letter = ({
             const y = letterRef.current?.getBoundingClientRect().y;
             setCurrentLetterPos({ x: x, y: y });
         }
-        
     }, [currentLetterIndex, currentWordIndex, typedLetter]);
 
     return (

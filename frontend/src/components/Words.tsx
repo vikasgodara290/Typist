@@ -2,24 +2,20 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import english1k from "../assets/english_1k.json";
 import Word from "./Word";
 import { v4 as uuidv4 } from "uuid";
-import SpeedDataBySecondType from "../types";
+import {LetterTrackingType} from "../types";
 
 interface WordsType {
     noOfWords: number;
     setTimerStart: React.Dispatch<React.SetStateAction<boolean>>;
     timer: number;
-    setTotalCorrectLetterTyped: React.Dispatch<React.SetStateAction<number>>;
-    setSpeedDataBySecond: React.Dispatch<
-        React.SetStateAction<SpeedDataBySecondType[]>
-    >;
+    setLetterTracker: React.Dispatch<React.SetStateAction<LetterTrackingType[]>>;
 }
 
 const Words = ({
     noOfWords,
     setTimerStart,
     timer,
-    setTotalCorrectLetterTyped,
-    setSpeedDataBySecond,
+    setLetterTracker
 }: WordsType) => {
     const [words, setWords] = useState<string[]>([]);
     const wordsDivRef = useRef<HTMLDivElement>(null);
@@ -62,9 +58,7 @@ const Words = ({
             if (e.key == " ") {
                 setCurrentLetterIndex(0);
                 setCurrentWordIndex((curr) => curr + 1);
-                if (isWordCorrectP) {
-                    setTotalCorrectLetterTyped((curr) => curr + 1);
-                }
+                setLetterTracker(curr => [...curr, {wordIndex: currentWordIndex, letterIndex: currentLetterIndex, isCorrect: true}])
                 return;
             } else {
                 return;
@@ -98,7 +92,6 @@ const Words = ({
             
             //if user is not on first word and is not 0 index of another word it will remove space and -1 the correct letter count
             if (currentLetterIndex === 0 && currentWordIndex != 0) {
-                setTotalCorrectLetterTyped((curr) => curr - 1);
                 setCurrentWordIndex((curr) => {
                     const newWordIndex = curr - 1;
                     setCurrentLetterIndex(words[newWordIndex].length - 1);
@@ -129,6 +122,7 @@ const Words = ({
     //-------------------------------------------------------------------------------------------------------//
     //when ever user hit any key it set the timer to start and focus on the words div
     useEffect(() => {
+        wordsDivRef.current?.focus();
         document.addEventListener("keyup", () => {
             setTimerStart(true);
             wordsDivRef.current?.focus();
@@ -210,19 +204,11 @@ const Words = ({
                                             word={wordObj.word}
                                             wordIndex={index + wordsRemoved}
                                             currentWordIndex={currentWordIndex}
-                                            currentLetterIndex={
-                                                currentLetterIndex
-                                            }
+                                            currentLetterIndex={currentLetterIndex}
                                             typedLetter={typedLetter}
-                                            setCurrentLetterPos={
-                                                setCurrentLetterPos
-                                            }
-                                            onIsWordCorrectChange={
-                                                onIsWordCorrectChange
-                                            }
-                                            setTotalCorrectLetterTyped={
-                                                setTotalCorrectLetterTyped
-                                            }
+                                            setCurrentLetterPos={setCurrentLetterPos}
+                                            onIsWordCorrectChange={onIsWordCorrectChange}
+                                            setLetterTracker={setLetterTracker}
                                         />
                                     )
                             )}
