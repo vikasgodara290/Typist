@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Letter from "./Letter";
 import { v4 as uuidv4 } from "uuid";
 import { LetterTrackingType } from "../types";
@@ -12,6 +12,7 @@ interface WordType {
     setCurrentLetterPos: any;
     onIsWordCorrectChange : (value : boolean) => void;
     setLetterTracker: React.Dispatch<React.SetStateAction<LetterTrackingType[]>>;
+    letterTracker: LetterTrackingType[];
 }
 
 const Word = ({
@@ -22,9 +23,11 @@ const Word = ({
     typedLetter,
     setCurrentLetterPos,
     onIsWordCorrectChange,
-    setLetterTracker
+    setLetterTracker,
+    letterTracker
 }: WordType) => {
     const [isWordCorrectC, setIsWordCorrectC] = useState<boolean | undefined>(undefined);
+    const [wordStyle, setWordStyle] = useState<string>('h-14 flex items-center');
     const letterWithIds = useMemo(
         () => word.split("").map((letter) => ({ id: uuidv4(), letter })),
         [word]
@@ -37,8 +40,24 @@ const Word = ({
         }
     },[isWordCorrectC])
 
+
+    useEffect(()=> {
+        if(currentLetterIndex === 0 && letterTracker.length > 0 && currentWordIndex - 1 === wordIndex)    
+        {
+            console.log(currentWordIndex - 1);
+            let currectWord = letterTracker.filter((item) => item.wordIndex = currentWordIndex - 1).map((item) => item.isCorrect);
+            console.log(currectWord);
+            
+            if(currectWord.includes(false) && currentWordIndex - 1 === wordIndex){
+                console.log('inner',currentWordIndex);
+                setWordStyle('h-14 flex items-center underline underline-offset-8 decoration-3 decoration-wrongTxt');
+            }
+
+        }
+    },[letterTracker])
+
     return (
-        <div key={wordIndex} className="h-14 flex items-center">
+        <div key={wordIndex} className={wordStyle}>
             {word &&
                 letterWithIds.map((letter, index) => (
                     <Letter

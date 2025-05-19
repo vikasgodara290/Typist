@@ -77,6 +77,7 @@ function App() {
                         setTimerStart={setTimerStart}
                         timer={timer}
                         setLetterTracker={setLetterTracker}
+                        letterTracker={letterTracker}
                     />
                 </>
             )}

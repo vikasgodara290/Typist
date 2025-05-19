@@ -2,20 +2,24 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import english1k from "../assets/english_1k.json";
 import Word from "./Word";
 import { v4 as uuidv4 } from "uuid";
-import {LetterTrackingType} from "../types";
+import { LetterTrackingType } from "../types";
 
 interface WordsType {
     noOfWords: number;
     setTimerStart: React.Dispatch<React.SetStateAction<boolean>>;
     timer: number;
-    setLetterTracker: React.Dispatch<React.SetStateAction<LetterTrackingType[]>>;
+    setLetterTracker: React.Dispatch<
+        React.SetStateAction<LetterTrackingType[]>
+    >;
+    letterTracker: LetterTrackingType[];
 }
 
 const Words = ({
     noOfWords,
     setTimerStart,
     timer,
-    setLetterTracker
+    setLetterTracker,
+    letterTracker
 }: WordsType) => {
     const [words, setWords] = useState<string[]>([]);
     const wordsDivRef = useRef<HTMLDivElement>(null);
@@ -58,7 +62,14 @@ const Words = ({
             if (e.key == " ") {
                 setCurrentLetterIndex(0);
                 setCurrentWordIndex((curr) => curr + 1);
-                setLetterTracker(curr => [...curr, {wordIndex: currentWordIndex, letterIndex: currentLetterIndex, isCorrect: true}])
+                setLetterTracker((curr) => [
+                    ...curr,
+                    {
+                        wordIndex: currentWordIndex,
+                        letterIndex: currentLetterIndex,
+                        isCorrect: true,
+                    },
+                ]);
                 return;
             } else {
                 return;
@@ -67,29 +78,53 @@ const Words = ({
 
         //if user press space in between a word, it moves to next word and also it set the word as incorrectly typed.
         if (e.key == " ") {
+
+            if(currentLetterIndex === 0){
+                return;
+            }
+
+            let skippedLetters: LetterTrackingType[] = [];
+            for (let i = currentLetterIndex; i < words[currentWordIndex].length; i++) {
+                skippedLetters = [
+                    ...skippedLetters,
+                    {
+                        wordIndex: currentWordIndex,
+                        letterIndex: i,
+                        isCorrect: false,
+                    },
+                ];
+            }
+
             setCurrentLetterIndex((curr) => {
                 if (curr !== words[currentWordIndex].length - 1) {
                     setIsWordCorrectP(false);
                 }
                 return 0;
             });
+            
+            setLetterTracker((curr) => {
+                skippedLetters.forEach((skippedLetter) => {
+                    curr = [...curr, skippedLetter];
+                });
+                return curr;
+            });
+
             setCurrentWordIndex((curr) => curr + 1);
             return;
         }
-
+        
         //it ignores the non related keys like alt, tab, f1-f9, esc etc.
         if (e.key.length !== 1 && e.key != "Backspace") return;
 
         if (e.key === "Backspace") {
-            
             //if user is at last letter of word (space always) and hit backspace user should not be able to go back to word
             if (
                 currentLetterIndex === words[currentWordIndex].length - 1 &&
                 isWordCorrectP
-            ){
+            ) {
                 return;
             }
-            
+
             //if user is not on first word and is not 0 index of another word it will remove space and -1 the correct letter count
             if (currentLetterIndex === 0 && currentWordIndex != 0) {
                 setCurrentWordIndex((curr) => {
@@ -111,7 +146,7 @@ const Words = ({
 
         //if it is a normal char and passes all he above conditions
         setTypedLetter(e.key);
-        
+
         //move to next letter
         if (words[currentWordIndex].length > currentLetterIndex) {
             setCurrentLetterIndex((curr) => curr + 1);
@@ -204,11 +239,18 @@ const Words = ({
                                             word={wordObj.word}
                                             wordIndex={index + wordsRemoved}
                                             currentWordIndex={currentWordIndex}
-                                            currentLetterIndex={currentLetterIndex}
+                                            currentLetterIndex={
+                                                currentLetterIndex
+                                            }
                                             typedLetter={typedLetter}
-                                            setCurrentLetterPos={setCurrentLetterPos}
-                                            onIsWordCorrectChange={onIsWordCorrectChange}
+                                            setCurrentLetterPos={
+                                                setCurrentLetterPos
+                                            }
+                                            onIsWordCorrectChange={
+                                                onIsWordCorrectChange
+                                            }
                                             setLetterTracker={setLetterTracker}
+                                            letterTracker={letterTracker}
                                         />
                                     )
                             )}
