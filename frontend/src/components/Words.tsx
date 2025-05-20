@@ -12,6 +12,7 @@ interface WordsType {
         React.SetStateAction<LetterTrackingType[]>
     >;
     letterTracker: LetterTrackingType[];
+    onTimerZeroTotalIncorrectLetter: (value: number) => void;
 }
 
 const Words = ({
@@ -19,7 +20,8 @@ const Words = ({
     setTimerStart,
     timer,
     setLetterTracker,
-    letterTracker
+    letterTracker,
+    onTimerZeroTotalIncorrectLetter
 }: WordsType) => {
     const [words, setWords] = useState<string[]>([]);
     const wordsDivRef = useRef<HTMLDivElement>(null);
@@ -33,6 +35,7 @@ const Words = ({
     const [wordsRemoved, setWordsRemoved] = useState<number>(0);
     const [wordsInFirstLine, setWordsnFirstLine] = useState<number>(0);
     const [isWordCorrectP, setIsWordCorrectP] = useState<boolean | undefined>();
+    const [totalIncorrectLetter, setTotalIncorrectLetter] = useState<number>(0);
 
     //-------------------------------------------------------------------------------------------------------//
     // set a array of words based on no of words required
@@ -198,7 +201,14 @@ const Words = ({
         setIsWordCorrectP(value);
     };
     //-------------------------------------------------------------------------------------------------------//
-    //console.log(letterTracker);
+    //-------------------------------------------------------------------------------------------------------//
+    useEffect(()=>{
+        if(timer === 0){
+            onTimerZeroTotalIncorrectLetter(totalIncorrectLetter);
+        }
+    },[timer])
+    //-------------------------------------------------------------------------------------------------------//
+
     return (
         <div className=" h-screen">
             <div
@@ -253,6 +263,7 @@ const Words = ({
                                             }
                                             setLetterTracker={setLetterTracker}
                                             letterTracker={letterTracker}
+                                            setTotalIncorrectLetter={setTotalIncorrectLetter}
                                         />
                                     )
                             )}

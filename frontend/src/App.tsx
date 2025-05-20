@@ -16,6 +16,7 @@ function App() {
     const [typingSpeed, setTypingSpeed] = useState<number>(0);
     const [speedDataBySecond, setSpeedDataBySecond] = useState<SpeedDataBySecondType[]>([]);
     const [letterTracker, setLetterTracker] = useState<LetterTrackingType[]>([]);
+    const [totalIncorrectLetterP, setTotalIncorrectLetterP] = useState<number>(0);
     //-----------------------------------------------------------------------------//
     //it starts the timer when user hit a key. it sets the setTimerStart in words comp.
     useEffect(() => {
@@ -39,14 +40,15 @@ function App() {
         clearInterval(timerIntervalRef.current);
     }
     //calculate the typing speed on timer 0
-    if (timer === 0) {
-        let wrongWordsIndexes = letterTracker.filter((item) => item.isCorrect === false).map(item => item.wordIndex);
-        let lettersOfWrongWords = letterTracker.filter((item) => wrongWordsIndexes.includes(item.wordIndex));
-        setTypingSpeed(
-            ((letterTracker.length - lettersOfWrongWords.length) * (60 / initialTimer.current)) / 5
-        );
-        setTimer(-1);
-    }
+    useEffect(() => {
+        if (timer === 0) {
+            let wrongWordsIndexes = letterTracker.filter((item) => item.isCorrect === false).map(item => item.wordIndex);
+            let lettersOfWrongWords = letterTracker.filter((item) => wrongWordsIndexes.includes(item.wordIndex));
+            setTypingSpeed(
+                ((letterTracker.length - lettersOfWrongWords.length) * (60 / initialTimer.current)) / 5
+            );
+        }
+    },[timer])
     //-----------------------------------------------------------------------------//
 
     //-------------------------------------------------------------------------------------------------------//
@@ -64,11 +66,16 @@ function App() {
         }
     },[timer])
     //-------------------------------------------------------------------------------------------------------//
+    //-------------------------------------------------------------------------------------------------------//
+    const onTimerZeroTotalIncorrectLetter = (value: number) => {
+        setTotalIncorrectLetterP(value);
+    };
+    //-------------------------------------------------------------------------------------------------------//
 
     return (
         <div className="bg-bgColor">
             {timer === -1 ? (
-                <SpeedGraph typingSpeed={typingSpeed} speedDataBySecond={speedDataBySecond}/>
+                <SpeedGraph typingSpeed={typingSpeed} speedDataBySecond={speedDataBySecond} time={initialTimer.current} letterTracker={letterTracker} totalIncorrectLetterP={totalIncorrectLetterP}/>
             ) : (
                 <>
                     <Timer timer={timer} />
@@ -78,6 +85,7 @@ function App() {
                         timer={timer}
                         setLetterTracker={setLetterTracker}
                         letterTracker={letterTracker}
+                        onTimerZeroTotalIncorrectLetter={onTimerZeroTotalIncorrectLetter}
                     />
                 </>
             )}

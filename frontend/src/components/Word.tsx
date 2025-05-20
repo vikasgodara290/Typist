@@ -12,6 +12,7 @@ interface WordType {
     setCurrentLetterPos: any;
     onIsWordCorrectChange : (value : boolean) => void;
     setLetterTracker: React.Dispatch<React.SetStateAction<LetterTrackingType[]>>;
+    setTotalIncorrectLetter: React.Dispatch<React.SetStateAction<number>>;
     letterTracker: LetterTrackingType[];
 }
 
@@ -24,7 +25,8 @@ const Word = ({
     setCurrentLetterPos,
     onIsWordCorrectChange,
     setLetterTracker,
-    letterTracker
+    letterTracker,
+    setTotalIncorrectLetter
 }: WordType) => {
     const [isWordCorrectC, setIsWordCorrectC] = useState<boolean | undefined>(undefined);
     const [wordStyle, setWordStyle] = useState<string>('h-14 flex items-center');
@@ -69,6 +71,7 @@ const Word = ({
                         wordLength={word.length}
                         setIsWordCorrectC={setIsWordCorrectC}
                         setLetterTracker={setLetterTracker}
+                        setTotalIncorrectLetter={setTotalIncorrectLetter}
                     />
                 ))}
         </div>

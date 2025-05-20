@@ -15,7 +15,8 @@ interface LetterType {
     >;
     setLetterTracker: React.Dispatch<
         React.SetStateAction<LetterTrackingType[]>
-    >;
+    >;    
+    setTotalIncorrectLetter: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const Letter = ({
@@ -29,6 +30,7 @@ const Letter = ({
     wordLength,
     setIsWordCorrectC,
     setLetterTracker,
+    setTotalIncorrectLetter
 }: LetterType) => {
     const [letterColor, setletterColor] = useState<string>("text-txtColor");
     const letterRef = useRef<HTMLDivElement>(null);
@@ -71,6 +73,7 @@ const Letter = ({
             //if check the typed letter is correct or not and set color accordingly
             if (typedLetter !== letter) {
                 setletterColor("text-wrongTxt");
+                setTotalIncorrectLetter(curr => curr + 1)
                 //set the entire word to wrong
                 setLetterTracker((curr) => [
                     ...curr,
