@@ -104,6 +104,8 @@ const Words = ({
             
             setLetterTracker((curr) => {
                 skippedLetters.forEach((skippedLetter) => {
+                    //console.log(curr , skippedLetter);
+                    
                     curr = [...curr, skippedLetter];
                 });
                 return curr;
@@ -112,7 +114,7 @@ const Words = ({
             setCurrentWordIndex((curr) => curr + 1);
             return;
         }
-        
+    
         //it ignores the non related keys like alt, tab, f1-f9, esc etc.
         if (e.key.length !== 1 && e.key != "Backspace") return;
 
@@ -196,7 +198,7 @@ const Words = ({
         setIsWordCorrectP(value);
     };
     //-------------------------------------------------------------------------------------------------------//
-
+    //console.log(letterTracker);
     return (
         <div className=" h-screen">
             <div

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Letter from "./Letter";
 import { v4 as uuidv4 } from "uuid";
 import { LetterTrackingType } from "../types";
@@ -42,14 +42,11 @@ const Word = ({
 
 
     useEffect(()=> {
-        if(currentLetterIndex === 0 && letterTracker.length > 0 && currentWordIndex - 1 === wordIndex)    
+        if(currentLetterIndex === 0 && currentWordIndex - 1 === wordIndex)    
         {
-            console.log(currentWordIndex - 1);
-            let currectWord = letterTracker.filter((item) => item.wordIndex = currentWordIndex - 1).map((item) => item.isCorrect);
-            console.log(currectWord);
-            
+            let currectWord = letterTracker.filter((item) => item.wordIndex === currentWordIndex - 1).map((item) => item.isCorrect);
+
             if(currectWord.includes(false) && currentWordIndex - 1 === wordIndex){
-                console.log('inner',currentWordIndex);
                 setWordStyle('h-14 flex items-center underline underline-offset-8 decoration-3 decoration-wrongTxt');
             }
 
