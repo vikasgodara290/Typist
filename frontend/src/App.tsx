@@ -83,6 +83,8 @@ function App() {
                         noOfWords={50}
                         setTimerStart={setTimerStart}
                         timer={timer}
+                        setTimer={setTimer}
+                        initialTimer={initialTimer.current}
                         setLetterTracker={setLetterTracker}
                         letterTracker={letterTracker}
                         onTimerZeroTotalIncorrectLetter={onTimerZeroTotalIncorrectLetter}

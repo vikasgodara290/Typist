@@ -6,8 +6,10 @@ import { LetterTrackingType } from "../types";
 
 interface WordsType {
     noOfWords: number;
-    setTimerStart: React.Dispatch<React.SetStateAction<boolean>>;
     timer: number;
+    initialTimer: number;
+    setTimerStart: React.Dispatch<React.SetStateAction<boolean>>;
+    setTimer: React.Dispatch<React.SetStateAction<number>>;
     setLetterTracker: React.Dispatch<
         React.SetStateAction<LetterTrackingType[]>
     >;
@@ -21,7 +23,9 @@ const Words = ({
     timer,
     setLetterTracker,
     letterTracker,
-    onTimerZeroTotalIncorrectLetter
+    onTimerZeroTotalIncorrectLetter,
+    setTimer,
+    initialTimer
 }: WordsType) => {
     const [words, setWords] = useState<string[]>([]);
     const wordsDivRef = useRef<HTMLDivElement>(null);
@@ -40,15 +44,20 @@ const Words = ({
     //-------------------------------------------------------------------------------------------------------//
     // set a array of words based on no of words required
     useEffect(() => {
+        const genWords = generateWords(noOfWords)
+        setWords(genWords);
+    }, [noOfWords]);
+
+    const generateWords = (num : number) => {
         let wordsTemp: string[] = [];
-        for (let i = 0; i < noOfWords; i++) {
+        for (let i = 0; i < num; i++) {
             let randomIndex = Math.floor(Math.random() * 1000);
             wordsTemp.push(english1k.words[randomIndex]);
         }
-        setWords(wordsTemp);
-    }, [noOfWords]);
+        return wordsTemp;
+    }
     //-------------------------------------------------------------------------------------------------------//
-
+    
     //-------------------------------------------------------------------------------------------------------//
     // it capture all the keys pressed by user
     function onKeyDownHandler(e: React.KeyboardEvent<HTMLDivElement>) {
@@ -81,13 +90,16 @@ const Words = ({
 
         //if user press space in between a word, it moves to next word and also it set the word as incorrectly typed.
         if (e.key == " ") {
-
-            if(currentLetterIndex === 0){
+            if (currentLetterIndex === 0) {
                 return;
             }
 
             let skippedLetters: LetterTrackingType[] = [];
-            for (let i = currentLetterIndex; i < words[currentWordIndex].length; i++) {
+            for (
+                let i = currentLetterIndex;
+                i < words[currentWordIndex].length;
+                i++
+            ) {
                 skippedLetters = [
                     ...skippedLetters,
                     {
@@ -104,11 +116,9 @@ const Words = ({
                 }
                 return 0;
             });
-            
+
             setLetterTracker((curr) => {
                 skippedLetters.forEach((skippedLetter) => {
-                    //console.log(curr , skippedLetter);
-                    
                     curr = [...curr, skippedLetter];
                 });
                 return curr;
@@ -117,9 +127,13 @@ const Words = ({
             setCurrentWordIndex((curr) => curr + 1);
             return;
         }
-    
+
         //it ignores the non related keys like alt, tab, f1-f9, esc etc.
-        if (e.key.length !== 1 && e.key != "Backspace") return;
+        const allowedKeys = /^[a-z0-9 .,;:?!'"-]$/i;
+
+        if (!allowedKeys.test(e.key) && e.key != "Backspace") {
+            return;
+        }
 
         if (e.key === "Backspace") {
             //if user is at last letter of word (space always) and hit backspace user should not be able to go back to word
@@ -163,7 +177,22 @@ const Words = ({
     //when ever user hit any key it set the timer to start and focus on the words div
     useEffect(() => {
         wordsDivRef.current?.focus();
-        document.addEventListener("keyup", () => {
+        document.addEventListener("keydown", (e: KeyboardEvent) => {
+            if(e.key === 'Tab'){
+                e.preventDefault();
+                const genWords = generateWords(noOfWords);
+                setWords(genWords);
+                setCurrentWordIndex(0);
+                setCurrentLetterIndex(0);
+                setTimer(initialTimer);
+                setTimerStart(false);
+                return;
+            }
+
+            const allowedKeys = /^[a-z0-9 .,;:?!'"-]$/i;
+            if (!allowedKeys.test(e.key) && e.key != "Backspace") {
+                return;
+            }
             setTimerStart(true);
             wordsDivRef.current?.focus();
         });
@@ -202,11 +231,11 @@ const Words = ({
     };
     //-------------------------------------------------------------------------------------------------------//
     //-------------------------------------------------------------------------------------------------------//
-    useEffect(()=>{
-        if(timer === 0){
+    useEffect(() => {
+        if (timer === 0) {
             onTimerZeroTotalIncorrectLetter(totalIncorrectLetter);
         }
-    },[timer])
+    }, [timer]);
     //-------------------------------------------------------------------------------------------------------//
 
     return (
@@ -263,7 +292,9 @@ const Words = ({
                                             }
                                             setLetterTracker={setLetterTracker}
                                             letterTracker={letterTracker}
-                                            setTotalIncorrectLetter={setTotalIncorrectLetter}
+                                            setTotalIncorrectLetter={
+                                                setTotalIncorrectLetter
+                                            }
                                         />
                                     )
                             )}
