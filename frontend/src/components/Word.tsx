@@ -47,11 +47,14 @@ const Word = ({
         if(currentLetterIndex === 0 && currentWordIndex - 1 === wordIndex)    
         {
             let currectWord = letterTracker.filter((item) => item.wordIndex === currentWordIndex - 1).map((item) => item.isCorrect);
-
+            console.log(currectWord);
+            
             if(currectWord.includes(false) && currentWordIndex - 1 === wordIndex){
                 setWordStyle('h-14 flex items-center underline underline-offset-8 decoration-3 decoration-wrongTxt');
             }
-
+            else{
+                setWordStyle('h-14 flex items-center');
+            }
         }
     },[letterTracker])
 

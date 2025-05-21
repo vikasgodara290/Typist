@@ -66,7 +66,7 @@ const SpeedGraph = ({
                 </div>
                 <div className="text-[32px] text-txtColor">acc</div>
                 <div className="text-[64px] text-amber-500">
-                    {`${accuracy.current}%`}
+                    {`${Math.round(accuracy.current)}%`}
                 </div>
             </div>
 
