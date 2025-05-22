@@ -72,20 +72,7 @@ function App() {
             let lettersOfWrongWords = letterTracker.filter((item) =>
                 wrongWordsIndexes.includes(item.wordIndex)
             );
-            if (timer === -1) {
-                setSpeedDataBySecond((curr) => [
-                    ...curr,
-                    {
-                        second: initialTimer.current - timer - 1,
-                        wpm: Math.round(
-                            ((letterTracker.length -
-                                lettersOfWrongWords.length) *
-                                (60 / (initialTimer.current - timer - 1))) /
-                                5
-                        ),
-                    },
-                ]);
-            } else {
+            if (timer > -1) {
                 setSpeedDataBySecond((curr) => [
                     ...curr,
                     {
@@ -110,7 +97,7 @@ function App() {
 
     return (
         <div className="bg-bgColor">
-            {timer === -1 ? (
+            {timer < 1 ? (
                 <SpeedGraph
                     typingSpeed={typingSpeed}
                     speedDataBySecond={speedDataBySecond}

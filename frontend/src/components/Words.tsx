@@ -53,7 +53,7 @@ const Words = ({
     const generateWords = (num: number) => {
         let wordsTemp: string[] = [];
         for (let i = 0; i < num; i++) {
-            let randomIndex = Math.floor(Math.random() * 1000);
+            let randomIndex = Math.floor(Math.random() * 100);
             wordsTemp.push(english1k.words[randomIndex]);
         }
         return wordsTemp;
