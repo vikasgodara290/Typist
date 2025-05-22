@@ -5,6 +5,7 @@ import { LetterTrackingType } from "../types";
 
 interface WordType {
     word: string;
+    words: string[];
     wordIndex: number;
     currentWordIndex: number;
     currentLetterIndex: number;
@@ -41,7 +42,6 @@ const Word = ({
             onIsWordCorrectChange(isWordCorrectC);
         }
     },[isWordCorrectC])
-
 
     useEffect(()=> {
         if(currentLetterIndex === 0 && currentWordIndex - 1 === wordIndex)    

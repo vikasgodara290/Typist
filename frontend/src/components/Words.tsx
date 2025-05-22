@@ -2,13 +2,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import english1k from "../assets/english_1k.json";
 import Word from "./Word";
 import { v4 as uuidv4 } from "uuid";
-import { LetterTrackingType } from "../types";
+import { LetterTrackingType, SpeedDataBySecondType } from "../types";
 
 interface WordsType {
     noOfWords: number;
     timer: number;
     initialTimer: number;
     setTimerStart: React.Dispatch<React.SetStateAction<boolean>>;
+    setSpeedDataBySecond: React.Dispatch<React.SetStateAction<SpeedDataBySecondType[]>>;
     setTimer: React.Dispatch<React.SetStateAction<number>>;
     setLetterTracker: React.Dispatch<
         React.SetStateAction<LetterTrackingType[]>
@@ -25,7 +26,8 @@ const Words = ({
     letterTracker,
     onTimerZeroTotalIncorrectLetter,
     setTimer,
-    initialTimer
+    initialTimer,
+    setSpeedDataBySecond
 }: WordsType) => {
     const [words, setWords] = useState<string[]>([]);
     const wordsDivRef = useRef<HTMLDivElement>(null);
@@ -44,20 +46,20 @@ const Words = ({
     //-------------------------------------------------------------------------------------------------------//
     // set a array of words based on no of words required
     useEffect(() => {
-        const genWords = generateWords(noOfWords)
+        const genWords = generateWords(noOfWords);
         setWords(genWords);
     }, [noOfWords]);
 
-    const generateWords = (num : number) => {
+    const generateWords = (num: number) => {
         let wordsTemp: string[] = [];
         for (let i = 0; i < num; i++) {
             let randomIndex = Math.floor(Math.random() * 1000);
             wordsTemp.push(english1k.words[randomIndex]);
         }
         return wordsTemp;
-    }
+    };
     //-------------------------------------------------------------------------------------------------------//
-    
+
     //-------------------------------------------------------------------------------------------------------//
     // it capture all the keys pressed by user
     function onKeyDownHandler(e: React.KeyboardEvent<HTMLDivElement>) {
@@ -178,7 +180,7 @@ const Words = ({
     useEffect(() => {
         wordsDivRef.current?.focus();
         document.addEventListener("keydown", (e: KeyboardEvent) => {
-            if(e.key === 'Tab'){
+            if (e.key === "Tab") {
                 e.preventDefault();
                 const genWords = generateWords(noOfWords);
                 setWords(genWords);
@@ -186,6 +188,14 @@ const Words = ({
                 setCurrentLetterIndex(0);
                 setTimer(initialTimer);
                 setTimerStart(false);
+                setTypedLetter("");
+                setCurrentLetterPos({ x: 72, y: 320 });
+                setWordsRemoved(0);
+                setWordsnFirstLine(0);
+                setIsWordCorrectP(undefined);
+                setTotalIncorrectLetter(0);
+                setLetterTracker([]);
+                setSpeedDataBySecond([]);
                 return;
             }
 
@@ -295,6 +305,7 @@ const Words = ({
                                             setTotalIncorrectLetter={
                                                 setTotalIncorrectLetter
                                             }
+                                            words={words}
                                         />
                                     )
                             )}
