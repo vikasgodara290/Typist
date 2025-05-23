@@ -89,11 +89,6 @@ function App() {
         }
     }, [timer]);
     //-------------------------------------------------------------------------------------------------------//
-    //-------------------------------------------------------------------------------------------------------//
-    const onTimerZeroTotalIncorrectLetter = (value: number) => {
-        setTotalIncorrectLetterP(value);
-    };
-    //-------------------------------------------------------------------------------------------------------//
 
     return (
         <div className="bg-bgColor">
@@ -116,9 +111,7 @@ function App() {
                         initialTimer={initialTimer.current}
                         setLetterTracker={setLetterTracker}
                         letterTracker={letterTracker}
-                        onTimerZeroTotalIncorrectLetter={
-                            onTimerZeroTotalIncorrectLetter
-                        }
+                        setTotalIncorrectLetter={setTotalIncorrectLetterP}
                         setSpeedDataBySecond={setSpeedDataBySecond}
                     />
                 </>

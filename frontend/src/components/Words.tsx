@@ -9,13 +9,13 @@ interface WordsType {
     timer: number;
     initialTimer: number;
     setTimerStart: React.Dispatch<React.SetStateAction<boolean>>;
+    setTotalIncorrectLetter: React.Dispatch<React.SetStateAction<number>>;
     setSpeedDataBySecond: React.Dispatch<React.SetStateAction<SpeedDataBySecondType[]>>;
     setTimer: React.Dispatch<React.SetStateAction<number>>;
     setLetterTracker: React.Dispatch<
         React.SetStateAction<LetterTrackingType[]>
     >;
     letterTracker: LetterTrackingType[];
-    onTimerZeroTotalIncorrectLetter: (value: number) => void;
 }
 
 const Words = ({
@@ -24,7 +24,7 @@ const Words = ({
     timer,
     setLetterTracker,
     letterTracker,
-    onTimerZeroTotalIncorrectLetter,
+    setTotalIncorrectLetter,
     setTimer,
     initialTimer,
     setSpeedDataBySecond
@@ -41,7 +41,6 @@ const Words = ({
     const [wordsRemoved, setWordsRemoved] = useState<number>(0);
     const [wordsInFirstLine, setWordsnFirstLine] = useState<number>(0);
     const [isWordCorrectP, setIsWordCorrectP] = useState<boolean | undefined>();
-    const [totalIncorrectLetter, setTotalIncorrectLetter] = useState<number>(0);
 
     //-------------------------------------------------------------------------------------------------------//
     // set a array of words based on no of words required
@@ -239,13 +238,6 @@ const Words = ({
     const onIsWordCorrectChange = (value: boolean) => {
         setIsWordCorrectP(value);
     };
-    //-------------------------------------------------------------------------------------------------------//
-    //-------------------------------------------------------------------------------------------------------//
-    useEffect(() => {
-        if (timer === 0) {
-            onTimerZeroTotalIncorrectLetter(totalIncorrectLetter);
-        }
-    }, [timer]);
     //-------------------------------------------------------------------------------------------------------//
 
     return (
