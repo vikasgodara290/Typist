@@ -7,11 +7,12 @@ import SpeedGraph from "./components/SpeedGraph";
 import { LetterTrackingType, SpeedDataBySecondType } from "./types";
 
 import "./app.css";
+import ToolBar from "./components/ToolBar";
 
 function App() {
+    const initialTimer = useRef<number>(15);
     const [timer, setTimer] = useState<number>(15);
     const timerIntervalRef = useRef<number>(timer);
-    const initialTimer = useRef<number>(15);
     const [timerStart, setTimerStart] = useState<boolean>(false);
     const [typingSpeed, setTypingSpeed] = useState<number>(0);
     const [speedDataBySecond, setSpeedDataBySecond] = useState<
@@ -102,6 +103,9 @@ function App() {
                 />
             ) : (
                 <>
+                    <div className="absolute mt-40 mx-auto left-0 right-0 top-0 bottom-0 w-[300px] h-10">
+                        <ToolBar setTimer={setTimer} initialTimer={initialTimer}/>
+                    </div>
                     <Timer timer={timer} />
                     <Words
                         noOfWords={50}

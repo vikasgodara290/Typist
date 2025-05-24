@@ -5,9 +5,17 @@
     --color-txtColor : #616161;
     --color-correctTxt : #F5E6C8;
     --color-wrongTxt : #E72D2D;
+    --color-toolbar : #2B2B2B;
 }
 
 .roboto-mono-400 {
+  font-family: "Roboto Mono", monospace;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.roboto-mono-300 {
   font-family: "Roboto Mono", monospace;
   font-optical-sizing: auto;
   font-weight: 400;

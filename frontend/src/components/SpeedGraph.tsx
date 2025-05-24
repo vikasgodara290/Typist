@@ -31,7 +31,6 @@ const SpeedGraph = ({
         wrong: number;
     }>({ total: 0, correct: 0, wrong: 0 });
     const accuracy = useRef<number>(0);
-console.log(totalIncorrectLetterP);
 
     useEffect(() => {
         let total = 0;

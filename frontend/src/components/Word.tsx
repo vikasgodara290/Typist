@@ -49,7 +49,7 @@ const Word = ({
             let currectWord = letterTracker.filter((item) => item.wordIndex === currentWordIndex - 1).map((item) => item.isCorrect);
             
             if(currectWord.includes(false) && currentWordIndex - 1 === wordIndex){
-                setWordStyle('h-14 flex items-center underline underline-offset-8 decoration-3 decoration-wrongTxt');
+                setWordStyle('h-14 flex items-center underline underline-offset-8 decoration-2 decoration-wrongTxt');
             }
             else{
                 setWordStyle('h-14 flex items-center');

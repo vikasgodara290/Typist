@@ -119,7 +119,7 @@ const Letter = ({
 
     return (
         <div
-            className={`${letterColor} w-5.5 h-14 roboto-mono-400`}
+            className={`${letterColor} w-5.5 h-14 roboto-mono-400 p-0 m-0`}
             ref={letterRef}
         >
             {letter && letter}
