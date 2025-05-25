@@ -3,6 +3,12 @@ import { useEffect, useRef, useState } from "react";
 import Words from "./components/Words";
 import Timer from "./components/Timer";
 import SpeedGraph from "./components/SpeedGraph";
+import {
+    SignedIn,
+    SignedOut,
+    SignInButton,
+    UserButton,
+} from "@clerk/clerk-react";
 
 import { LetterTrackingType, SpeedDataBySecondType } from "./types";
 
@@ -10,8 +16,9 @@ import "./app.css";
 import ToolBar from "./components/ToolBar";
 
 function App() {
-    const initialTimer = useRef<number>(15);
-    const [timer, setTimer] = useState<number>(15);
+    const [userSelectedTime, setUserSelectedTime] = useState<number>( Number (localStorage.getItem("time")) || 30);
+    const initialTimer = useRef<number>(Number (localStorage.getItem("time"))  || 30 );
+    const [timer, setTimer] = useState<number>(Number (localStorage.getItem("time"))  || 30);
     const timerIntervalRef = useRef<number>(timer);
     const [timerStart, setTimerStart] = useState<boolean>(false);
     const [typingSpeed, setTypingSpeed] = useState<number>(0);
@@ -90,9 +97,28 @@ function App() {
         }
     }, [timer]);
     //-------------------------------------------------------------------------------------------------------//
+    //-------------------------------------------------------------------------------------------------------//
+    useEffect(() => {
+        setTimer(userSelectedTime);
+        initialTimer.current = userSelectedTime;
+        localStorage.setItem("time", userSelectedTime.toString());
+    },[userSelectedTime])
+    //-------------------------------------------------------------------------------------------------------//
 
     return (
-        <div className="bg-bgColor">
+        <div className="bg-bgColor h-screen">
+            <header className="absolute inset-0 flex justify-between h-24 items-center roboto-mono-400 mx-[72px]">
+                <div className="text-4xl text-correctTxt">Typist</div>
+                <div className="text-txtColor flex items-center hover:cursor-pointer">
+                    {/* <span className="mx-2"><CgProfile/></span> */}
+                    <SignedOut>
+                        <SignInButton />
+                    </SignedOut>
+                    <SignedIn>
+                        <UserButton />
+                    </SignedIn>
+                </div>
+            </header>
             {timer < 1 ? (
                 <SpeedGraph
                     typingSpeed={typingSpeed}
@@ -103,12 +129,15 @@ function App() {
                 />
             ) : (
                 <>
-                    <div className="absolute mt-40 mx-auto left-0 right-0 top-0 bottom-0 w-[300px] h-10">
-                        <ToolBar setTimer={setTimer} initialTimer={initialTimer}/>
+                    <div className="absolute mt-40 mx-auto inset-0 w-[300px] h-10">
+                        <ToolBar
+                            initialTimer={initialTimer}
+                            setUserSelectedTime={setUserSelectedTime}
+                        />
                     </div>
                     <Timer timer={timer} />
                     <Words
-                        noOfWords={50}
+                        noOfWords={150}
                         setTimerStart={setTimerStart}
                         timer={timer}
                         setTimer={setTimer}
@@ -118,6 +147,7 @@ function App() {
                         setTotalIncorrectLetter={setTotalIncorrectLetterP}
                         setSpeedDataBySecond={setSpeedDataBySecond}
                     />
+                    
                 </>
             )}
         </div>

@@ -3,6 +3,7 @@ import english1k from "../assets/english_1k.json";
 import Word from "./Word";
 import { v4 as uuidv4 } from "uuid";
 import { LetterTrackingType, SpeedDataBySecondType } from "../types";
+import { TbReload } from "react-icons/tb";
 
 interface WordsType {
     noOfWords: number;
@@ -10,7 +11,9 @@ interface WordsType {
     initialTimer: number;
     setTimerStart: React.Dispatch<React.SetStateAction<boolean>>;
     setTotalIncorrectLetter: React.Dispatch<React.SetStateAction<number>>;
-    setSpeedDataBySecond: React.Dispatch<React.SetStateAction<SpeedDataBySecondType[]>>;
+    setSpeedDataBySecond: React.Dispatch<
+        React.SetStateAction<SpeedDataBySecondType[]>
+    >;
     setTimer: React.Dispatch<React.SetStateAction<number>>;
     setLetterTracker: React.Dispatch<
         React.SetStateAction<LetterTrackingType[]>
@@ -27,7 +30,7 @@ const Words = ({
     setTotalIncorrectLetter,
     setTimer,
     initialTimer,
-    setSpeedDataBySecond
+    setSpeedDataBySecond,
 }: WordsType) => {
     const [words, setWords] = useState<string[]>([]);
     const wordsDivRef = useRef<HTMLDivElement>(null);
@@ -52,7 +55,7 @@ const Words = ({
     const generateWords = (num: number) => {
         let wordsTemp: string[] = [];
         for (let i = 0; i < num; i++) {
-            let randomIndex = Math.floor(Math.random() * 100);
+            let randomIndex = Math.floor(Math.random() * 1000);
             wordsTemp.push(english1k.words[randomIndex]);
         }
         return wordsTemp;
@@ -239,9 +242,27 @@ const Words = ({
         setIsWordCorrectP(value);
     };
     //-------------------------------------------------------------------------------------------------------//
+    //-------------------------------------------------------------------------------------------------------//
+    const handleRetartBtn = () => {
+        const genWords = generateWords(noOfWords);
+        setWords(genWords);
+        setCurrentWordIndex(0);
+        setCurrentLetterIndex(0);
+        setTimer(initialTimer);
+        setTimerStart(false);
+        setTypedLetter("");
+        setCurrentLetterPos({ x: 72, y: 320 });
+        setWordsRemoved(0);
+        setWordsnFirstLine(0);
+        setIsWordCorrectP(undefined);
+        setTotalIncorrectLetter(0);
+        setLetterTracker([]);
+        setSpeedDataBySecond([]);
+    };
+    //-------------------------------------------------------------------------------------------------------//
 
     return (
-        <div className=" h-screen">
+        <div className="h-48">
             <div
                 id="wordsDiv"
                 tabIndex={1}
@@ -301,6 +322,17 @@ const Words = ({
                                         />
                                     )
                             )}
+                </div>
+                <div className="text-txtColor text-2xl flex justify-center my-24">
+                    <span className="hover:cursor-pointer" onClick={handleRetartBtn}>
+                        <TbReload />
+                    </span>
+                </div>
+                <div className="text-txtColor roboto-mono-300 text-[12px] flex justify-center items-center">
+                    <span className="w-fit h-fit bg-correctTxt rounded-[2px] p-1 mr-2">
+                        tab
+                    </span>
+                    - restart
                 </div>
             </div>
         </div>

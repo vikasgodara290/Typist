@@ -117,6 +117,12 @@ const SpeedGraph = ({
                         <span className="text-[32px] text-amber-500">{`${time}s`}</span>
                     </div>
                 </div>
+                <div className="text-txtColor roboto-mono-300 text-[12px] flex justify-center items-center mt-36">
+                    <span className="w-fit h-fit bg-correctTxt rounded-[2px] p-1 mr-2">
+                        tab
+                    </span>
+                    - restart
+                </div>
             </div>
         </div>
     );
