@@ -17,7 +17,6 @@ import ToolBar from "./components/ToolBar";
 
 function App() {
     const [userSelectedTime, setUserSelectedTime] = useState<number>( Number (localStorage.getItem("time")) || 30);
-    const initialTimer = useRef<number>(Number (localStorage.getItem("time"))  || 30 );
     const [timer, setTimer] = useState<number>(Number (localStorage.getItem("time"))  || 30);
     const timerIntervalRef = useRef<number>(timer);
     const [timerStart, setTimerStart] = useState<boolean>(false);
@@ -63,7 +62,7 @@ function App() {
             );
             setTypingSpeed(
                 ((letterTracker.length - lettersOfWrongWords.length) *
-                    (60 / initialTimer.current)) /
+                    (60 / userSelectedTime)) /
                     5
             );
         }
@@ -73,7 +72,7 @@ function App() {
     //-------------------------------------------------------------------------------------------------------//
     //counting the speed every second
     useEffect(() => {
-        if (timer < initialTimer.current) {
+        if (timer < userSelectedTime) {
             let wrongWordsIndexes = letterTracker
                 .filter((item) => item.isCorrect === false)
                 .map((item) => item.wordIndex);
@@ -84,11 +83,11 @@ function App() {
                 setSpeedDataBySecond((curr) => [
                     ...curr,
                     {
-                        second: initialTimer.current - timer,
+                        second: userSelectedTime - timer,
                         wpm: Math.round(
                             ((letterTracker.length -
                                 lettersOfWrongWords.length) *
-                                (60 / (initialTimer.current - timer))) /
+                                (60 / (userSelectedTime - timer))) /
                                 5
                         ),
                     },
@@ -100,7 +99,6 @@ function App() {
     //-------------------------------------------------------------------------------------------------------//
     useEffect(() => {
         setTimer(userSelectedTime);
-        initialTimer.current = userSelectedTime;
         localStorage.setItem("time", userSelectedTime.toString());
     },[userSelectedTime])
     //-------------------------------------------------------------------------------------------------------//
@@ -123,7 +121,7 @@ function App() {
                 <SpeedGraph
                     typingSpeed={typingSpeed}
                     speedDataBySecond={speedDataBySecond}
-                    time={initialTimer.current}
+                    time={userSelectedTime}
                     letterTracker={letterTracker}
                     totalIncorrectLetterP={totalIncorrectLetterP}
                 />
@@ -131,7 +129,7 @@ function App() {
                 <>
                     <div className="absolute mt-40 mx-auto inset-0 w-[300px] h-10">
                         <ToolBar
-                            initialTimer={initialTimer}
+                            userSelectedTime={userSelectedTime}
                             setUserSelectedTime={setUserSelectedTime}
                         />
                     </div>
@@ -141,7 +139,7 @@ function App() {
                         setTimerStart={setTimerStart}
                         timer={timer}
                         setTimer={setTimer}
-                        initialTimer={initialTimer.current}
+                        userSelectedTime={userSelectedTime}
                         setLetterTracker={setLetterTracker}
                         letterTracker={letterTracker}
                         setTotalIncorrectLetter={setTotalIncorrectLetterP}

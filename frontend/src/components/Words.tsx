@@ -8,7 +8,7 @@ import { TbReload } from "react-icons/tb";
 interface WordsType {
     noOfWords: number;
     timer: number;
-    initialTimer: number;
+    userSelectedTime: number;
     setTimerStart: React.Dispatch<React.SetStateAction<boolean>>;
     setTotalIncorrectLetter: React.Dispatch<React.SetStateAction<number>>;
     setSpeedDataBySecond: React.Dispatch<
@@ -29,7 +29,7 @@ const Words = ({
     letterTracker,
     setTotalIncorrectLetter,
     setTimer,
-    initialTimer,
+    userSelectedTime,
     setSpeedDataBySecond,
 }: WordsType) => {
     const [words, setWords] = useState<string[]>([]);
@@ -188,7 +188,7 @@ const Words = ({
                 setWords(genWords);
                 setCurrentWordIndex(0);
                 setCurrentLetterIndex(0);
-                setTimer(initialTimer);
+                setTimer(userSelectedTime);
                 setTimerStart(false);
                 setTypedLetter("");
                 setCurrentLetterPos({ x: 72, y: 320 });
@@ -208,7 +208,7 @@ const Words = ({
             setTimerStart(true);
             wordsDivRef.current?.focus();
         });
-    }, []);
+    }, [userSelectedTime]);
     //-------------------------------------------------------------------------------------------------------//
 
     //-------------------------------------------------------------------------------------------------------//
@@ -243,12 +243,12 @@ const Words = ({
     };
     //-------------------------------------------------------------------------------------------------------//
     //-------------------------------------------------------------------------------------------------------//
-    const handleRetartBtn = () => {
+    const handleRestartBtn = () => {
         const genWords = generateWords(noOfWords);
         setWords(genWords);
         setCurrentWordIndex(0);
         setCurrentLetterIndex(0);
-        setTimer(initialTimer);
+        setTimer(userSelectedTime);
         setTimerStart(false);
         setTypedLetter("");
         setCurrentLetterPos({ x: 72, y: 320 });
@@ -324,7 +324,7 @@ const Words = ({
                             )}
                 </div>
                 <div className="text-txtColor text-2xl flex justify-center my-24">
-                    <span className="hover:cursor-pointer" onClick={handleRetartBtn}>
+                    <span className="hover:cursor-pointer" onClick={handleRestartBtn}>
                         <TbReload />
                     </span>
                 </div>
